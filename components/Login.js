@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('');
 
   // Function to handle the submission
   const handleSubmit = async (e) => {
@@ -26,7 +25,12 @@ export default function Login() {
 
     // Handle the response from the backend
     const data = await response.json();
-    setMessage(data.message === 'Login successful' ? data.message : 'Invalid Username or Password');
+
+    // Determine the color based on the message content
+    const color = data.message === 'Login successful' ? 'green' : 'red';
+
+    // Set the message with the determined color
+    setMessage(<span style={{ color }}>{data.message}</span>);
   };
 
   return (

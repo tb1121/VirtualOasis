@@ -44,6 +44,11 @@ const Navbar = () => {
               Login
             </span>
           </Link>
+          <Link href="/signup">
+            <span className={`text-white cursor-pointer lg:ml-4 lg:inline-block ${isMenuOpen ? 'hidden' : ''}`} onClick={toggleMenu}>
+              Signup
+            </span>
+          </Link>
         </div>
       </div>
       {isMenuOpen && (

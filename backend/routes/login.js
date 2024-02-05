@@ -12,7 +12,7 @@ router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try{
     const existingUser = await User.findOne({ username });
-    if(!existingUser || !existingUser.password !== password){
+    if(!existingUser || existingUser.password !== password){
       return res.status(401).json( {message: 'Invalid Username or Password'})
     }
     res.status(200).json({ message: 'Login successful' });
