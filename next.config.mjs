@@ -1,6 +1,14 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+// next.config.mjs
+export default {
   reactStrictMode: true,
-};
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.(woff2)$/,
+      use: {
+        loader: 'url-loader',
+      },
+    });
 
-export default nextConfig;
+    return config;
+  },
+};

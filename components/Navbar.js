@@ -1,83 +1,80 @@
-// components/Navbar.js
 import React, { useState } from 'react';
+import { AppBar, Toolbar, Button, MenuList, MenuListItem, Separator, TextInput } from 'react95';
 import Link from 'next/link';
+import Image from 'next/image';
+import logoIMG from '../public/Winlogo.ico';
+import vaporTeal from 'react95/dist/themes/vaporTeal';
+import ms_sans_serif from 'react95/dist/fonts/ms_sans_serif.woff2';
+import ms_sans_serif_bold from 'react95/dist/fonts/ms_sans_serif_bold.woff2';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
+
 
 const Navbar = () => {
-  const [isMenuOpen, setMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen(!isMenuOpen);
-  };
+  // const buttonClick = () => {
+  //   alert('hello!')
+  // }
 
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/">
-          <span className="text-white text-xl font-bold cursor-pointer">Your Logo</span>
-        </Link>
-        <div className="lg:hidden">
-          <button onClick={toggleMenu} className="text-white focus:outline-none">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-            </svg>
-          </button>
+    <ThemeProvider theme={vaporTeal}>
+    <AppBar >
+      <Toolbar style={{ justifyContent: 'space-between' }}>
+        <div style={{ position: 'relative', display: 'inline-block'}}>
+          <Button 
+            onClick={() => setOpen(!open)}
+            active={open}
+            style={{ fontWeight: 'bold'}}
+          >
+            <Image
+              src={logoIMG}
+              alt='react95 logo'
+              style={{width:'75%', height:'75%', padding:'0 .5vw 0 0'}}
+             />
+            Start
+          </Button>
+          {open && (
+            <MenuList
+              style={{
+                position: 'absolute',
+                left: '0',
+                top: '100%',
+                // padding: '1vw',
+                zIndex: 4,
+              }}
+              onClick={() => setOpen(false)}
+            >
+              <Link href="/login">
+              <MenuListItem>
+                <span role='img' className='Computer4_32x32_4'>
+                </span>
+              Login 
+              </MenuListItem>
+              </Link>
+              <Link href="/signup">
+              <MenuListItem>
+                <span role='img' className='FolderFile_32x32_4'>
+                  
+                </span>
+                <div style={{padding:'0 0 0 0'}}>Signup</div>
+              </MenuListItem>
+              </Link>
+              <Separator />
+              <MenuListItem disabled>
+                <span role='img' aria-label='🔙'>
+                  🔙
+                </span>
+                Logout
+              </MenuListItem>
+            </MenuList>
+          )}
         </div>
-        <div className={`lg:flex lg:items-center ${isMenuOpen ? 'block' : 'hidden'}`}>
-          <Link href="/">
-            <span className={`text-white cursor-pointer lg:ml-4 lg:inline-block ${isMenuOpen ? 'hidden' : ''}`} onClick={toggleMenu}>
-              Home
-            </span>
-          </Link>
-          <Link href="/about">
-            <span className={`text-white cursor-pointer lg:ml-4 lg:inline-block ${isMenuOpen ? 'hidden' : ''}`} onClick={toggleMenu}>
-              About
-            </span>
-          </Link>
-          <Link href="/mindful">
-            <span className={`text-white cursor-pointer lg:ml-4 lg:inline-block ${isMenuOpen ? 'hidden' : ''}`} onClick={toggleMenu}>
-              Mindfulness
-            </span>
-          </Link>
-          {/* Add login link */}
-          <Link href="/login">
-            <span className={`text-white cursor-pointer lg:ml-4 lg:inline-block ${isMenuOpen ? 'hidden' : ''}`} onClick={toggleMenu}>
-              Login
-            </span>
-          </Link>
-          <Link href="/signup">
-            <span className={`text-white cursor-pointer lg:ml-4 lg:inline-block ${isMenuOpen ? 'hidden' : ''}`} onClick={toggleMenu}>
-              Signup
-            </span>
-          </Link>
-        </div>
-      </div>
-      {isMenuOpen && (
-        <div className="lg:hidden bg-gray-800 p-4">
-          <Link href="/">
-            <span className="text-white cursor-pointer block mb-2" onClick={toggleMenu}>
-              Home
-            </span>
-          </Link>
-          <Link href="/about">
-            <span className="text-white cursor-pointer block mb-2" onClick={toggleMenu}>
-              About
-            </span>
-          </Link>
-          <Link href="/mindful">
-            <span className="text-white cursor-pointer block mb-2" onClick={toggleMenu}>
-              Mindfulness
-            </span>
-          </Link>
-          {/* Add login link */}
-          <Link href="/login">
-            <span className="text-white cursor-pointer block" onClick={toggleMenu}>
-              Login
-            </span>
-          </Link>
-        </div>
-      )}
-    </nav>
+
+        <TextInput placeholder='Search...' width={150} />
+      </Toolbar>
+    </AppBar>
+    </ThemeProvider>
   );
-};
+}
 
 export default Navbar;

@@ -4,6 +4,7 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [login, setLogin] = useState(false);
 
   // Function to handle the submission
   const handleSubmit = async (e) => {
@@ -28,6 +29,9 @@ export default function Login() {
 
     // Determine the color based on the message content
     const color = data.message === 'Login successful' ? 'green' : 'red';
+    if(data.message === 'Login successful'){
+      setLogin(true);
+    }
 
     // Set the message with the determined color
     setMessage(<span style={{ color }}>{data.message}</span>);
@@ -53,3 +57,5 @@ export default function Login() {
     </div>
   );
 }
+
+

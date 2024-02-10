@@ -1,0 +1,22 @@
+/* Spring.module.css */
+.underwaterAnimation {
+  position: relative;
+  animation: float 6s ease-in-out infinite; /* Adjust the animation duration and timing function as needed */
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(-10);
+  }
+  50% {
+    transform: translateY(-40px); /* Adjust the vertical distance the GIF moves */
+  }
+}
+
+.virtualOasis {
+  /* max-width: 100%; */
+  /* box-shadow: 0 0 20px white; */
+  /* border-radius: 15px; */
+  /* padding: 0; */
+  /* opacity: 0.55; */
+}
