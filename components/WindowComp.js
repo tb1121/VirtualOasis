@@ -59,14 +59,20 @@ export default function WindowComp() {
 
   const handleShuffleClick = () => {
     const audio = audioRef.current;
-
-    const shuffledSongs = shuffle([...songsArr]);
-
-    setCurrentSongIndex(0);
-    audioRef.current.src = shuffledSongs[0];
-    audioRef.current.play();
-    setIsAudioPlaying(true);
+  
+    // Check if audioRef is available before shuffling
+    if (audio) {
+      const shuffledSongs = shuffle([...songsArr]);
+  
+      setCurrentSongIndex(0);
+      audioRef.current.src = shuffledSongs[0];
+      audioRef.current.play();
+      setIsAudioPlaying(true);
+    }
   };
+  
+  
+  
 
   const handlePauseClick = () => {
     const audio = audioRef.current;
@@ -207,7 +213,7 @@ export default function WindowComp() {
             <ScrollView>
               {isAudioPlaying && (
                 <Image
-                  style={{ opacity: '70%' }}
+                  style={{ opacity: '70%', width:'100%',height:'100%'}}
                   src={CD}
                   alt="boombox"
                 />

@@ -3,8 +3,9 @@ import Navbar from '../../components/Navbar';
 import Spring from '../../components/Spring';
 import WindowComp from '../../components/WindowComp';
 import '@react95/icons/icons.css';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { MenuList, MenuListItem, Separator, styleReset, Button } from 'react95';
+import { AuthProvider } from '../../components/AuthContext';
+import { useAuth } from '../../components/AuthContext';
 // pick a theme of your choice
 import original from 'react95/dist/themes/original';
 import vaporteal from 'react95/dist/themes/vaporTeal';
@@ -16,27 +17,10 @@ import ms_sans_serif_bold from 'react95/dist/fonts/ms_sans_serif_bold.woff2';
 
 
 
-// Global styles for fonts
-const GlobalStyles = createGlobalStyle`
-  ${styleReset}
-  @font-face {
-    font-family: 'ms_sans_serif';
-    src: url('${ms_sans_serif}') format('woff2');
-    font-weight: 400;
-    font-style: normal;
-  }
-  @font-face {
-    font-family: 'ms_sans_serif';
-    src: url('${ms_sans_serif_bold}') format('woff2');
-    font-weight: bold;
-    font-style: normal;
-  }
-  body {
-    font-family: 'ms_sans_serif';
-  }
-`;
+
 
 const HomePage = () => {
+  const { isLoggedIn } = useAuth();
   // State to track whether audio is playing
   const [isAudioPlaying, setAudioPlaying] = useState(false)
 
@@ -54,8 +38,6 @@ const HomePage = () => {
 
   return (
     <>
-    <GlobalStyles />
-    <ThemeProvider theme={vaporteal}>
       <div style={{ position: 'relative', overflowX: 'hidden' }}>
         <Navbar />
         <div style={{height: '100vh', overflow: 'hidden' }}>
@@ -71,7 +53,7 @@ const HomePage = () => {
             }}
             alt='Full Screen Gif'
           />
-          <WindowComp />
+          { isLoggedIn && <WindowComp/> }
           <div
             style={{
               position: 'fixed', // Use fixed positioning for the GIF
@@ -92,7 +74,6 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-    </ThemeProvider>
     </>
   );
 };

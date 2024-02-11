@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { TextInput, Button, Window, WindowHeader, GroupBox } from 'react95';
+import Draggable from 'react-draggable';
 
 export default function Signup() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [messageColor, setMessageColor] = useState('');
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,9 +37,14 @@ export default function Signup() {
       });
 
       if (response.ok) {
-        console.log(response)
+        console.log(response);
         const data = await response.json();
+        const color = data.message === 'Signup successful!' ? 'green' : 'red';
         setMessage(data.message === 'Signup successful!' ? data.message : 'Error signing up');
+        setMessageColor(color);
+        setTimeout(() => {
+          router.push('/');
+        }, 1000);
       } else {
         setMessage('Error signing up');
       }
@@ -45,32 +55,38 @@ export default function Signup() {
   };
 
   return (
-    <div className='border p-6 max-w-md mx-auto my-8 flex flex-col items-center rounded'>
-      <h2 className='text-xl mb-4'>Signup:</h2>
-      {message && <p className={message === 'Signup successful!' ? 'text-green-500' : 'text-red-500'}>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <label className='block mb-2'>
-          Username:
-          <input
-            className='border p-2 w-full rounded'
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </label>
-        <label className='block mb-2'>
-          Password:
-          <input
-            className='border p-2 w-full rounded'
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-        <button className='bg-blue-500 text-white p-2 rounded w-full' type="submit">
-          Signup
-        </button>
-      </form>
-    </div>
+    <Draggable handle=".draggable-handle">
+      <GroupBox style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Window style={{ width: 300, zIndex: 2 }}>
+          <WindowHeader className="draggable-handle">Please Signup!</WindowHeader>
+          <div className="border p-6 flex flex-col items-center rounded">
+            {message && <p style={{ color: messageColor }}>{message}</p>}
+            <form onSubmit={handleSubmit}>
+              <label className="block mb-2">
+                Username:
+                <TextInput
+                  className="border p-2 w-full rounded"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </label>
+              <label className="block mb-2">
+                Password:
+                <TextInput
+                  className="border p-2 w-full rounded"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+              <Button className="bg-blue-500 text-white p-2 rounded w-full" type="submit">
+                Signup
+              </Button>
+            </form>
+          </div>
+        </Window>
+      </GroupBox>
+    </Draggable>
   );
 }

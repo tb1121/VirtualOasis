@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
+import { useAuth } from './AuthContext';
+import { useRouter } from 'next/router';
+import { TextInput, Button, Window, WindowHeader, GroupBox, Hourglass } from 'react95';
+import Draggable from 'react-draggable';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const [login, setLogin] = useState(false);
+  const [messageColor, setMessageColor] = useState('');
+  const { Login } = useAuth();
+  const router = useRouter();
 
   // Function to handle the submission
   const handleSubmit = async (e) => {
@@ -29,33 +35,55 @@ export default function Login() {
 
     // Determine the color based on the message content
     const color = data.message === 'Login successful' ? 'green' : 'red';
-    if(data.message === 'Login successful'){
-      setLogin(true);
+
+    if (data.message === 'Login successful') {
+      setMessage('Login Successful!');
+      Login();
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
+    } else {
+      setMessage(data.message);
     }
 
-    // Set the message with the determined color
-    setMessage(<span style={{ color }}>{data.message}</span>);
+    // Set the message color
+    setMessageColor(color);
   };
 
   return (
-    <div className='border p-6 max-w-md mx-auto my-8 flex flex-col items-center rounded'>
-      <h2 className='text-xl mb-4'>Please Login here:</h2>
-      {message && <p className='text-red-500'>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <label className='block mb-2'>
-          Username:
-          <input className='border p-2 w-full rounded' type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
-        <label className='block mb-2'>
-          Password:
-          <input className='border p-2 w-full rounded' type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        <button className='bg-blue-500 text-white p-2 rounded w-full' type="submit">
-          Login
-        </button>
-      </form>
-    </div>
+    <Draggable handle=".draggable-handle">
+      <GroupBox style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Window style={{ width: 300, zIndex: 2 }}>
+          <WindowHeader className="draggable-handle">Please Login!</WindowHeader>
+          <div className="border p-6 flex flex-col items-center rounded">
+            {message && <p style={{ color: messageColor }}>{message}</p>}
+            {Login && <Hourglass size={32} style={{ margin: 20 }} />}
+            <form onSubmit={handleSubmit}>
+              <label className="block mb-2">
+                Username:
+                <TextInput
+                  className="border p-2 w-full rounded"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </label>
+              <label className="block mb-2">
+                Password:
+                <TextInput
+                  className="border p-2 w-full rounded"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </label>
+              <Button className="bg-blue-500 text-white p-2 rounded w-full" type="submit">
+                Login
+              </Button>
+            </form>
+          </div>
+        </Window>
+      </GroupBox>
+    </Draggable>
   );
 }
-
-
