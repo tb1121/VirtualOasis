@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Spring from '../../components/Spring';
+import Image from 'next/image';
 import WindowComp from '../../components/WindowComp';
 import '@react95/icons/icons.css';
 import { MenuList, MenuListItem, Separator, styleReset, Button } from 'react95';
 import { AuthProvider } from '../../components/AuthContext';
 import { useAuth } from '../../components/AuthContext';
-// pick a theme of your choice
-import original from 'react95/dist/themes/original';
-import vaporteal from 'react95/dist/themes/vaporTeal';
 
 // original Windows95 font (optionally)
 import ms_sans_serif from 'react95/dist/fonts/ms_sans_serif.woff2';
@@ -19,7 +17,7 @@ import ms_sans_serif_bold from 'react95/dist/fonts/ms_sans_serif_bold.woff2';
 
 
 
-const HomePage = () => {
+const HomePage = ({handleThemeChange}) => {
   const { isLoggedIn } = useAuth();
   // State to track whether audio is playing
   const [isAudioPlaying, setAudioPlaying] = useState(false)
@@ -39,12 +37,12 @@ const HomePage = () => {
   return (
     <>
       <div style={{ position: 'relative', overflowX: 'hidden' }}>
-        <Navbar />
+        <Navbar handleThemeChange={handleThemeChange}/>
         <div style={{height: '100vh', overflow: 'hidden' }}>
           {/* Liminal background image with adjusted styles */}
           <img
             src='/OasisBG.gif'
-            style={{
+              style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',

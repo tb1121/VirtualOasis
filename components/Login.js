@@ -9,7 +9,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [messageColor, setMessageColor] = useState('');
-  const { Login } = useAuth();
+  const { Login, isLoggedIn } = useAuth();
   const router = useRouter();
 
   // Function to handle the submission
@@ -38,10 +38,10 @@ export default function Login() {
 
     if (data.message === 'Login successful') {
       setMessage('Login Successful!');
-      Login();
+      Login(username);
       setTimeout(() => {
         router.push('/');
-      }, 1000);
+      }, 2000);
     } else {
       setMessage(data.message);
     }
@@ -57,7 +57,7 @@ export default function Login() {
           <WindowHeader className="draggable-handle">Please Login!</WindowHeader>
           <div className="border p-6 flex flex-col items-center rounded">
             {message && <p style={{ color: messageColor }}>{message}</p>}
-            {Login && <Hourglass size={32} style={{ margin: 20 }} />}
+            {isLoggedIn && <Hourglass size={32} style={{ margin: 20 }} />}
             <form onSubmit={handleSubmit}>
               <label className="block mb-2">
                 Username:
