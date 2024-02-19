@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { TextInput, Button, Window, WindowHeader, GroupBox } from 'react95';
+import { TextInput, Button, Window, WindowHeader } from 'react95';
 import Draggable from 'react-draggable';
+import 'animate.css';
 
 export default function Signup() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [messageColor, setMessageColor] = useState('');
+  const [signedUp, setSignedup] = useState(false)
+  const [shaking, setShaking] = useState(false)
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -28,6 +31,8 @@ export default function Signup() {
 
   const handleData = async () => {
     try {
+      setShaking(false)
+      setSignedup(false)
       const response = await fetch('http://localhost:3001/api/signup', {
         method: 'POST',
         headers: {
@@ -41,12 +46,15 @@ export default function Signup() {
         const data = await response.json();
         const color = data.message === 'Signup successful!' ? 'green' : 'red';
         setMessage(data.message === 'Signup successful!' ? data.message : 'Error signing up');
+        setSignedup(true)
         setMessageColor(color);
         setTimeout(() => {
           router.push('/');
         }, 1000);
       } else {
-        setMessage('Error signing up');
+        setShaking(true)
+        setMessage('User already exists');
+        setMessageColor('red'); // Set the color explicitly
       }
     } catch (error) {
       console.error('Error:', error);
@@ -56,8 +64,13 @@ export default function Signup() {
 
   return (
     <Draggable handle=".draggable-handle">
-      <GroupBox style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Window style={{ width: 300, zIndex: 2 }}>
+      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Window
+          className={`animate__animated ${
+          shaking ? 'animate__shakeX' : ''
+          } ${signedUp ? 'animate__flip' : ''}`}
+          style={{ width: 300, zIndex: 2 }}
+          >
           <WindowHeader className="draggable-handle">Please Signup!</WindowHeader>
           <div className="border p-6 flex flex-col items-center rounded">
             {message && <p style={{ color: messageColor }}>{message}</p>}
@@ -86,7 +99,7 @@ export default function Signup() {
             </form>
           </div>
         </Window>
-      </GroupBox>
+      </div>
     </Draggable>
   );
 }

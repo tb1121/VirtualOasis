@@ -7,18 +7,16 @@ import {
   MenuList,
   MenuListItem,
   Separator,
-  Tooltip,
 } from 'react95';
 import Image from 'next/image';
 import logoIMG from '../public/Winlogo.ico';
 import { useAuth } from './AuthContext';
 import Link from 'next/link';
-import { matrix, vaporTeal, olive, travel, rainyDay, aiee, candy, coldGray, darkTeal, fxDev, marine, ninjaTurtles, peggysPastels, polarized, seawater, solarizedDark, solarizedLight, slate, spruce, stormClouds, violetDark, water, wmii, original } from 'react95/dist/themes'; // Importing only the matrix theme
-
+import { original, matrix, vaporTeal, olive, travel, rainyDay, aiee, candy, coldGray, darkTeal, fxDev, marine, ninjaTurtles, peggysPastels, polarized, seawater, solarizedDark, solarizedLight } from 'react95/dist/themes'; 
 
 const Navbar = ({ handleThemeChange }) => {
   const [open, setOpen] = useState(false);
-  const [themeOpen, setThemeOpen] = useState(false); // State for theme options menu
+  const [themeOpen, setThemeOpen] = useState(false);
   const router = useRouter();
   const { Logout, isLoggedIn, username } = useAuth();
 
@@ -26,6 +24,30 @@ const Navbar = ({ handleThemeChange }) => {
     Logout();
     router.push('/');
   };
+
+  const themeOptions = [
+    { name: 'Original', theme: original},
+    { name: 'Matrix', theme: matrix },
+    { name: 'VaporTeal', theme: vaporTeal },
+    { name: 'Olive', theme: olive },
+    { name: 'Travel', theme: travel },
+    { name: 'RainyDay', theme: rainyDay },
+    { name: 'Aiee', theme: aiee },
+    { name: 'Candy', theme: candy },
+    { name: 'ColdGray', theme: coldGray },
+    { name: 'DarkTeal', theme: darkTeal },
+    { name: 'FxDev', theme: fxDev },
+    { name: 'Marine', theme: marine },
+    { name: 'NinjaTurtles', theme: ninjaTurtles },
+    { name: 'PeggysPastels', theme: peggysPastels },
+    { name: 'Polarized', theme: polarized },
+    { name: 'Seawater', theme: seawater },
+    { name: 'SolarizedDark', theme: solarizedDark },
+    { name: 'SolarizedLight', theme: solarizedLight }
+  ];
+
+  const firstColumn = themeOptions.slice(0, Math.ceil(themeOptions.length / 2));
+  const secondColumn = themeOptions.slice(Math.ceil(themeOptions.length / 2));
 
   return (
     <AppBar style={{ zIndex: 1000 }}>
@@ -84,134 +106,46 @@ const Navbar = ({ handleThemeChange }) => {
         </div>
         {isLoggedIn && username && (
           <p>Welcome <span style={{ fontWeight: 'bold'}}>{username}</span>!</p>
-
         )}
         {/* Theme button and options */}
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <Button
             onClick={() => setThemeOpen(!themeOpen)}
             active={themeOpen}
-            style={{ fontWeight: 'bold', zIndex: 10}}
-
+            style={{ fontWeight: 'bold', zIndex: 10 }}
           >
             Theme
           </Button>
           {/* Display theme options menu if themeOpen is true */}
           {themeOpen && (
-            <MenuList
-              style={{
-                position: 'absolute',
-                right: '0',
-                top: '100%',
-                zIndex: 10,
-              }}
-            >
-              {/* Change theme to matrix when clicked */}
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(matrix);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                Matrix
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(vaporTeal);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                VaporTeal
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(olive);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                Olive
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(travel);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                Travel
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(rainyDay);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                RainyDay
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(aiee);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                Aiee
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(candy);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                Candy
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(coldGray);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                ColdGray
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(darkTeal);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                DarkTeal
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(fxDev);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                FxDev
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(marine);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                Marine
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(ninjaTurtles);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                NinjaTurtles
-              </MenuListItem>
-              <MenuListItem
-                onClick={() => {
-                  handleThemeChange(peggysPastels);
-                  setThemeOpen(false); // Close theme options menu
-                }}
-              >
-                PeggysPastels 
-              </MenuListItem>
-            </MenuList>
+            <div style={{ display: 'flex', position: 'absolute', right: '0', top: '100%', zIndex: 10 }}>
+              <MenuList>
+                {firstColumn.map((option, index) => (
+                  <MenuListItem
+                    key={index}
+                    onClick={() => {
+                      handleThemeChange(option.theme);
+                      setThemeOpen(false); // Close theme options menu
+                    }}
+                  >
+                    {option.name}
+                  </MenuListItem>
+                ))}
+              </MenuList>
+              <MenuList style={{ marginLeft: '1rem' }}>
+                {secondColumn.map((option, index) => (
+                  <MenuListItem
+                    key={index}
+                    onClick={() => {
+                      handleThemeChange(option.theme);
+                      setThemeOpen(false); // Close theme options menu
+                    }}
+                  >
+                    {option.name}
+                  </MenuListItem>
+                ))}
+              </MenuList>
+            </div>
           )}
         </div>
       </Toolbar>

@@ -9,15 +9,19 @@ import {
   MenuList,
   MenuListItem,
   Button,
-  Tooltip
+  Tooltip,
 } from 'react95';
 import '@react95/icons/icons.css';
 import Image from 'next/image';
 import CD from '../public/spinningCD.gif';
 import playGif from '../public/playGif.gif';
 import DavidWave from '../public/DavidWave.gif';
+import water from '../public/water.gif'
 import cubeSpin from '../public/cubeSpin.gif';
+import spinningwindow from '../public/spinningwindow.gif'
+import pixelStatue from '../public/pixelStatue.gif'
 import Grid from '../public/3dgrid.gif';
+import { useAuth } from './AuthContext';
 
 
 
@@ -31,6 +35,7 @@ export default function WindowComp() {
   const [sliderValue, setSliderValue] = useState(0);
   const [sliderMax, setSliderMax] = useState(100); // Initial max 
   const [currentGifIndex, setCurrentGifIndex] = useState(0);
+  const { isLoggedIn } = useAuth();
 
   const songsArr = [
     '/DireDireDocks64.mp3',
@@ -44,7 +49,7 @@ export default function WindowComp() {
     'Gran Turismo 6  - Yusuke Yamamoto (channel U) - Lunar Mare.mp3',
   ];
 
-  const gifArr = [CD,playGif,DavidWave,cubeSpin,Grid]
+  const gifArr = [CD,playGif,DavidWave,cubeSpin,Grid,water, spinningwindow,pixelStatue]
 
   const handleGifChange = () => {
     // Increment the index, and loop back to the first GIF if at the end
@@ -52,6 +57,11 @@ export default function WindowComp() {
     setCurrentGifIndex(newIndex);
   };
 
+  // useEffect(() => {
+  //   if(!isLoggedIn){
+  //     handlePauseClick()
+  //   } 
+  // }, [isLoggedIn]);
 
   useEffect(() => {
     setScrollingText('');
@@ -310,13 +320,14 @@ export default function WindowComp() {
   return (
     <Draggable handle=".window-header">
       <div style={{ position: 'fixed', top: 0, right: 0 }}>
-        <Window
+        <Window 
           style={{ maxWidth: '250px', margin: '5vw', transition: 'width 0.5s' }}
         >
           <WindowHeader className="window-header">
             <span className="CdMusic_16x16_4"></span>
             Tunes.exe
           </WindowHeader>
+          
           <Toolbar noPadding>
             <Button variant="thin">Favorite</Button>
             <Button variant="thin" onClick={handleSaveClick}>

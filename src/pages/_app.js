@@ -21,7 +21,7 @@ function App({ Component, pageProps }) {
     <AuthProvider>
         <ThemeProvider theme={theme}>
           <GlobalStyles />
-          <Component {...pageProps} handleThemeChange={handleThemeChange} />
+          <Component {...pageProps} theme={theme} handleThemeChange={handleThemeChange} />
         </ThemeProvider>
     </AuthProvider>
   );

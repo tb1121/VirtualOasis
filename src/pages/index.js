@@ -1,26 +1,26 @@
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
-import Spring from '../../components/Spring';
-import Image from 'next/image';
-import WindowComp from '../../components/WindowComp';
-import '@react95/icons/icons.css';
-import { MenuList, MenuListItem, Separator, styleReset, Button } from 'react95';
-import { AuthProvider } from '../../components/AuthContext';
 import { useAuth } from '../../components/AuthContext';
+import StackedDivs from '../../components/StackedDivs';
+import MovingText from 'react-moving-text'
+import Draggable from 'react-draggable';
 
-// original Windows95 font (optionally)
-import ms_sans_serif from 'react95/dist/fonts/ms_sans_serif.woff2';
-import ms_sans_serif_bold from 'react95/dist/fonts/ms_sans_serif_bold.woff2';
+const water = ['/water.gif']
+const BGs = ['/OasisBG.gif', '/gridBG.gif'];
 
-
-
-
-
-
-const HomePage = ({handleThemeChange}) => {
+const HomePage = ({ handleThemeChange, theme }) => {
   const { isLoggedIn } = useAuth();
   // State to track whether audio is playing
-  const [isAudioPlaying, setAudioPlaying] = useState(false)
+  const [isAudioPlaying, setAudioPlaying] = useState(false);
+  const [backgroundIndex, setBackgroundIndex] = useState(0);
+
+  // const handleBackgroundClick = () => {
+  //   setBackgroundIndex((prevIndex) => (prevIndex + 1) % BGs.length);
+  // };
+
+  // const handleAlert = () => {
+  //   alert('all done!');
+  // }
 
   // Function to handle click on the Virtual Oasis GIF
   const handleVirtualOasisClick = () => {
@@ -36,22 +36,27 @@ const HomePage = ({handleThemeChange}) => {
 
   return (
     <>
-      <div style={{ position: 'relative', overflowX: 'hidden' }}>
-        <Navbar handleThemeChange={handleThemeChange}/>
-        <div style={{height: '100vh', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', overflowX: 'hidden', background: theme.desktopBackground }}>
+        <Navbar handleThemeChange={handleThemeChange} />
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', margin: '0', padding: '0'}}>
           {/* Liminal background image with adjusted styles */}
-          <img
-            src='/OasisBG.gif'
-              style={{
+          {/* <img
+            onClick={handleBackgroundClick}
+            src={BGs[backgroundIndex]}
+            style={{
               width: '100%',
               height: '100%',
               objectFit: 'cover',
               position: 'absolute', // Use absolute positioning for the background image
-              zIndex: -1,
+              // zIndex: ,
             }}
             alt='Full Screen Gif'
-          />
-          { isLoggedIn && <WindowComp/> }
+          /> */}
+          {/* <SketchfabEmbed /> */}
+          {/* <Temple95 style={{zIndex: 1}}/> */}
+          {/* <PCB /> */}
+          <StackedDivs />
+          {/* {isLoggedIn && <WindowComp />} */}
           <div
             style={{
               position: 'fixed', // Use fixed positioning for the GIF
@@ -59,16 +64,41 @@ const HomePage = ({handleThemeChange}) => {
               left: '50%',
               transform: 'translate(-50%, -50%)',
               color: 'white',
-              fontSize: '24px',
+              fontSize: '7vw',
               textAlign: 'center',
-              cursor: 'pointer', // Set cursor to indicate clickability
-              // Ensure it's above the image
+              cursor: 'pointer', 
               borderRadius: 0,
+              padding: '0',
+              margin: '0',
+              alignItems: 'center',
             }}
-            onClick={handleVirtualOasisClick} // Attach click handler
+            onClick={handleVirtualOasisClick} 
           >
-            {/* Animated GIF component */}
-            <Spring />
+            {isLoggedIn && ( <Draggable>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ fontSize: '7vw', padding: '0', margin: '0', color: {theme} }}>Virtual Oasis</div>
+                <img src={water[0]} alt="Water Image" style={{ height: '5vw', width: '38vw' }} />
+              </div>
+              </Draggable>
+            )}
+
+
+          <div style={{ fontSize: '7vw' }}>
+          {!isLoggedIn && <MovingText type="typewriter"
+            dataText={[
+            'Welcome to',
+            'the',
+            'Virtual Oasis',
+            'sit back,',
+            'relax,',
+            'and never',
+            '...',
+            'ever',
+            '...',
+            'escape'
+          ]} >
+          </MovingText>}
+          </div>
           </div>
         </div>
       </div>
