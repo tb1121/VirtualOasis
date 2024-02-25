@@ -8,6 +8,7 @@ app.use(cors());
 app.use(express.json());
 const loginRouter = require('./routes/login');
 const signupRouter = require('./routes/signup');
+const saveNotesRouter = require('./routes/saveNotes');
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://Taylor:PNJ009ylWsBLcTIi@assessment.i6oru1a.mongodb.net/', {
@@ -20,8 +21,10 @@ db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
+// Set up routes with appropriate prefixes
 app.use('/api', signupRouter);
 app.use('/api', loginRouter);
+app.use('/api/notes', saveNotesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

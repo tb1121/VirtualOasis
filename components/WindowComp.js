@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoffee, faHeart as soildHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart } from '@fortawesome/free-regular-svg-icons';
+import 'animate.css';
+
 import {
   Window,
   ScrollView,
@@ -21,6 +26,10 @@ import cubeSpin from '../public/cubeSpin.gif';
 import spinningwindow from '../public/spinningwindow.gif'
 import pixelStatue from '../public/pixelStatue.gif'
 import Grid from '../public/3dgrid.gif';
+import mikeTyson from '../public/mikeTyson.gif';
+import fzero from '../public/fzero.webp';
+
+
 import { useAuth } from './AuthContext';
 
 
@@ -28,6 +37,7 @@ import { useAuth } from './AuthContext';
 
 export default function WindowComp() {
   const [open, setOpen] = useState(false);
+  const [heartClicked, setheartClicked] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef();
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
@@ -49,19 +59,13 @@ export default function WindowComp() {
     'Gran Turismo 6  - Yusuke Yamamoto (channel U) - Lunar Mare.mp3',
   ];
 
-  const gifArr = [CD,playGif,DavidWave,cubeSpin,Grid,water, spinningwindow,pixelStatue]
+  const gifArr = [CD,playGif,DavidWave,cubeSpin,Grid,water, spinningwindow,pixelStatue,mikeTyson,fzero]
 
   const handleGifChange = () => {
     // Increment the index, and loop back to the first GIF if at the end
     const newIndex = (currentGifIndex + 1) % gifArr.length;
     setCurrentGifIndex(newIndex);
   };
-
-  // useEffect(() => {
-  //   if(!isLoggedIn){
-  //     handlePauseClick()
-  //   } 
-  // }, [isLoggedIn]);
 
   useEffect(() => {
     setScrollingText('');
@@ -120,32 +124,47 @@ export default function WindowComp() {
   }, [currentSongIndex, audioRef]);
 
   useEffect(() => {
+    const audio = audioRef.current;
+  
     const handleSongStart = () => {
       setScrollingText(`Now Playing: ${songsArr[currentSongIndex]}`);
-      setSliderValue(0); // Reset slider when a new song starts
+      setSliderValue(0);
     };
   
     const handleLoadedMetadata = () => {
-      setSliderValue(0); // Reset slider when new song starts
-      setSliderMax(audioRef.current.duration); // Update max value
+      setSliderMax(audio.duration);
     };
   
     const handleTimeUpdate = () => {
-      setSliderValue(audioRef.current.currentTime);
+      setSliderValue(audio.currentTime);
     };
   
-    if (audioRef.current) {
-      audioRef.current.addEventListener('play', handleSongStart);
-      audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
-      audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
+    const handleSongEnd = () => {
+      setCurrentSongIndex((prevIndex) => (prevIndex + 1) % songsArr.length);
+      audio.src = songsArr[currentSongIndex];
+  
+      const currentSongName = 'Now Playing: ' + songsArr[currentSongIndex];
+      setScrollingText(currentSongName);
+      setSliderValue(0);
+      setSliderMax(audio.duration);
+      audio.play();
+    };
+  
+    if (audio) {
+      audio.addEventListener('play', handleSongStart);
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('ended', handleSongEnd);
   
       return () => {
-        audioRef.current.removeEventListener('play', handleSongStart);
-        audioRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
-        audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+        audio.removeEventListener('play', handleSongStart);
+        audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        audio.removeEventListener('timeupdate', handleTimeUpdate);
+        audio.removeEventListener('ended', handleSongEnd);
       };
     }
-  }, [currentSongIndex, audioRef]);
+  }, [currentSongIndex, songsArr]);
+  
 
   const handleTimeUpdate = () => {
     setSliderValue(audioRef.current.currentTime);
@@ -317,11 +336,20 @@ export default function WindowComp() {
     return formattedTime;
   };
 
+  //check if heart is clicked
+  if(heartClicked){
+  //if it is grab current song and send to DataBase
+    
+    //We need to send the song with the user to the DB to store in user
+    //
+  }
+  
+
   return (
     <Draggable handle=".window-header">
-      <div style={{ position: 'fixed', top: 0, right: 0 }}>
+      <div style={{ position: 'fixed', margin: '6vw 2vw 0vw 0vw', padding: '0', top: '0', right: '0' }}>
         <Window 
-          style={{ maxWidth: '250px', margin: '5vw', transition: 'width 0.5s' }}
+          style={{maxWidth: '250px'}}
         >
           <WindowHeader className="window-header">
             <span className="CdMusic_16x16_4"></span>
@@ -329,7 +357,8 @@ export default function WindowComp() {
           </WindowHeader>
           
           <Toolbar noPadding>
-            <Button variant="thin">Favorite</Button>
+            <Button variant="thin" >Favorites</Button>
+            
             <Button variant="thin" onClick={handleSaveClick}>
               Save
             </Button>
@@ -343,6 +372,18 @@ export default function WindowComp() {
               <Button variant="thin" onClick={() => setOpen(!open)} active={open}>
                 Music
               </Button>
+              {/* show heart when music is playing */}
+              {isAudioPlaying && (
+                <Tooltip text='click to favorite!'>
+                <FontAwesomeIcon className={`animate__animated ${heartClicked ? 'animate__heartBeat' : ''}`}
+                  style={{ marginLeft: '8px',
+                  color: heartClicked? 'red': undefined,
+                   }}
+                  onClick={() => setheartClicked(!heartClicked)}
+                  icon={heartClicked ? soildHeart : faHeart}
+                />
+                </Tooltip>
+              )}
               {open && (
                 <MenuList
                   style={{
