@@ -18,8 +18,7 @@ const userSchema = new mongoose.Schema({
   ],
   favoriteSongs: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'FavoriteSong',
+      type: String,
     },
   ],
 });

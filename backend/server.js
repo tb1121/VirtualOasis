@@ -9,6 +9,7 @@ app.use(express.json());
 const loginRouter = require('./routes/login');
 const signupRouter = require('./routes/signup');
 const saveNotesRouter = require('./routes/saveNotes');
+const saveFavoriteSongRouter = require('./routes/saveFavoriteSong')
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://Taylor:PNJ009ylWsBLcTIi@assessment.i6oru1a.mongodb.net/', {
@@ -25,7 +26,10 @@ db.once('open', () => {
 app.use('/api', signupRouter);
 app.use('/api', loginRouter);
 app.use('/api/notes', saveNotesRouter);
+app.use('/api/saveFavoriteSong', saveFavoriteSongRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+//route to favorite song is /api/favoriteSong/sendFavoriteSong

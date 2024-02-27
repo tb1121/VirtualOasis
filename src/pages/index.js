@@ -9,6 +9,7 @@ const water = ['/water.gif'];
 const BGs = ['/OasisBG.gif', '/gridBG.gif'];
 
 const HomePage = ({ handleThemeChange, theme }) => {
+  // console.log(theme)
   const { isLoggedIn } = useAuth();
   const [isAudioPlaying, setAudioPlaying] = useState(false);
   const [backgroundIndex, setBackgroundIndex] = useState(0);
@@ -21,7 +22,7 @@ const HomePage = ({ handleThemeChange, theme }) => {
 
   return (
     <>
-      <div style={{ position: 'relative', overflowX: 'hidden', background: theme.desktopBackground }}>
+      <div style={{position: 'relative', overflowX: 'hidden', background: theme.desktopBackground }}>
         <Navbar handleThemeChange={handleThemeChange} />
         <div style={{ height: '100vh', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', margin: '0', padding: '0' }}>
           {isLoggedIn && <StackedDivs />}
@@ -32,7 +33,7 @@ const HomePage = ({ handleThemeChange, theme }) => {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                color: 'white',
+                color: theme.anchor,
                 fontSize: '7vw',
                 textAlign: 'center',
                 borderRadius: 0,
@@ -41,9 +42,9 @@ const HomePage = ({ handleThemeChange, theme }) => {
                 alignItems: 'center'
               }}
             >
-              <Draggable>
+              <Draggable >
                 <div onClick={handleVirtualOasisClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div style={{ zIndex: 5, fontSize: '7vw', padding: '0', margin: '0 0 -1vw 0', color: { theme } }}>Virtual Oasis</div>
+                  <div style={{ color: theme, zIndex: 5, fontSize: '7vw', padding: '0', margin: '0 0 -1vw 0' }}>Virtual Oasis</div>
                   <img src={water[0]} alt="Water Image" style={{ height: '5vw', width: '38vw' }} />
                 </div>
               </Draggable>
