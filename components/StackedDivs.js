@@ -1,15 +1,15 @@
 import React from 'react';
 import '@react95/icons/icons.css';
-import { useAuth }  from './AuthContext';
+import { useAuth } from './AuthContext';
 import WindowComp from './WindowComp';
-import Notes from './Notes'
+import Notes from './Notes';
+import Internet from './Internet';
 import { useState, useEffect } from 'react';
-
+import 'animate.css';
 
 const StackedDivs = () => {
-
   const { isLoggedIn, username } = useAuth();
-  const [notesData, setNotesData] = useState('')
+  const [notesData, setNotesData] = useState('');
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -17,73 +17,69 @@ const StackedDivs = () => {
     }
   }, [isLoggedIn]);
 
-  const [clicked, setClicked] = useState(false)
-  const [ isTunesOpen, setIsTunesOpen ] = useState(false);
-  const [ isNotesOpen, setIsNotesOpen] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [isTunesOpen, setIsTunesOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isInternetOpen, setIsInternetOpen] = useState(false);
 
   const handleTunesClick = () => {
     if (isLoggedIn) {
-      // Open the WindowComp
       setClicked(!clicked);
-      setIsTunesOpen(!clicked); // Toggle isTunesOpen based on the updated value of clicked
+      setIsTunesOpen(!clicked);
     } else {
       alert('Please login!');
     }
   };
-      
 
   const handleNotesClick = async () => {
     if (isLoggedIn) {
-      // Open the WindowComp
       setClicked(!clicked);
-      setIsNotesOpen(!clicked); // Toggle isNotesOpen based on the updated value of clicked
-  
+      setIsNotesOpen(!clicked);
+
       if (!isNotesOpen) {
         try {
-          // Make a fetch request to your backend to get the most recent note
           const response = await fetch(`http://localhost:3001/api/notes/get-all-notes/${username}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
             },
           });
-  
-          // Handle the response from the backend
+
           if (response.ok) {
             const data = await response.json();
-            setNotesData(data.allNotes); // Set the state directly with the content
+            setNotesData(data.allNotes);
             console.log('All notes:', data);
-            // Update your state or do something with the most recent note data
           } else {
             console.error('Error fetching most recent note');
-            // Handle error response from the backend
           }
         } catch (error) {
           console.error('Error during fetch:', error);
-          // Handle other fetch-related errors
         }
       }
     } else {
       alert('Please login!');
     }
   };
-  
-  
-  
+
+  const handleInternetClick = () => {
+    if (isLoggedIn) {
+      setClicked(!clicked);
+      setIsInternetOpen(!clicked);
+    } else {
+      alert('Please login!');
+    }
+  };
 
   const handleDiv3Click = () => {
     console.log('Div 3 clicked!');
-    // Add your custom logic for "Div 3" click event
   };
 
   const handleDiv4Click = () => {
     console.log('Div 4 clicked!');
-    // Add your custom logic for "Div 4" click event
   };
 
   const handleDiv5Click = () => {
     console.log('Div 5 clicked!');
-    // Add your custom logic for "Div 5" click event
   };
 
   const divsContent = [
@@ -98,9 +94,9 @@ const StackedDivs = () => {
       onClick: handleNotesClick,
     },
     {
-      iconClass: 'YourNextIconClass',
-      text: '',
-      onClick: handleDiv3Click,
+      iconClass: 'Explorer100_32x32_4',
+      text: 'Internet.exe',
+      onClick: handleInternetClick,
     },
     {
       iconClass: 'YourNextIconClass',
@@ -114,23 +110,28 @@ const StackedDivs = () => {
     },
   ];
 
-  
   return (
-    <div style={{ margin: '100px 0 100px 10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      {divsContent.map((content, index) => (
-        <div key={index} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <span
-            className={content.iconClass}
-            onClick={content.onClick}
-            style={{ cursor: content.onClick ? 'pointer' : 'default', margin: '0', padding: '0' }}
-          ></span>
-          <p style={{ margin: '0', color: 'white', fontSize: '15px', textAlign: 'center' }}>
-            {content.text}
-          </p>
-        </div>
-      ))}
-      {isTunesOpen && <WindowComp onClose={() => setIsTunesOpen(false)} />} {/* Pass onClose handler to WindowComp */}
-      {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} onClose={() => setIsNotesOpen(false)} />} 
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '6vw 2vw 0vw 1vw' }}>
+        {divsContent.map((content, index) => (
+          <div key={index} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <span
+              className={content.iconClass}
+              onClick={content.onClick}
+              style={{ cursor: content.onClick ? 'pointer' : 'default', margin: '0', padding: '0' }}
+            ></span>
+            <p style={{ margin: '0', color: 'white', fontSize: '15px', textAlign: 'center' }}>
+              {content.text}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div style={{minWidth: '100%', minHeight: '100%', display: 'flex', justifyContent: 'space-around', flexDirection: 'row', marginTop: '6vw', marginLeft:'1.6vw'}}>
+        {isTunesOpen && <WindowComp style={{}}isTunesOpen={isTunesOpen} setIsTunesOpen={setIsTunesOpen} onClose={() => setIsTunesOpen(false)} />}
+        {isInternetOpen && <Internet />}
+        {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} onClose={() => setIsNotesOpen(false)} />}
+        
+      </div>
     </div>
   );
 };

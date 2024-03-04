@@ -99,9 +99,16 @@ export default function Login() {
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
                 <Confetti active={isLoggedIn} config={config} style={{ zIndex: 2000 }} />
               </div>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row', // or 'column' for a vertical layout
+                justifyContent: 'space-around',
+                alignItems: 'center',
+              }}>
               <Button className="bg-blue-500 text-white p-2 rounded w-full" type="submit">
                 Login
               </Button>
+              </div>
             </form>
           </div>
         </Window>

@@ -3,6 +3,7 @@ import Draggable from 'react-draggable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as soildHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
+import { useZIndex } from './ZIndexContext';
 import 'animate.css';
 
 import {
@@ -29,10 +30,14 @@ import mikeTyson from '../public/mikeTyson.gif';
 import fzero from '../public/fzero.webp';
 import water from '../public/water.gif';
 import computer from '../public/microsoft-computer.gif';
+import cyberArt from '../public/cyberArt.gif';
+import outsideWindow from '../public/outsideWindow.gif';
+import blocks from '../public/blocks.gif';
+import spinning from '../public/spinning.gif';
 
 import { useAuth } from './AuthContext';
 
-export default function WindowComp() {
+export default function WindowComp({isTunesOpen}) {
   const [open, setOpen] = useState(false);
   const [heartClicked, setheartClicked] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -42,8 +47,9 @@ export default function WindowComp() {
   const [sliderValue, setSliderValue] = useState(0);
   const [sliderMax, setSliderMax] = useState(100); // Initial max
   const [currentGifIndex, setCurrentGifIndex] = useState(0);
+  const [localZIndex, setLocalZIndex] = useState(3);
   const [favoritedSongs, setFavoritedSongs] = useState([]);
-  const [usersFavoriteSong, setUsersFavoriteSong] = useState('')
+  const [usersFavoriteSong, setUsersFavoriteSong] = useState('');
   const { isLoggedIn } = useAuth();
 
   const songsArr = [
@@ -69,6 +75,13 @@ export default function WindowComp() {
     '/PASSPORTMID.mp3',
     '/CANYONMID.mp3',
     '/FLOURISHMID.mp3',
+    '/Kemmei Adachi - Mirage.mp3',
+    '/Pilotwings-Rocketbelt .mp3',
+    '/The Sims Soundtrack_ Neighborhood 1.mp3',
+    '/The Sims Soundtrack_ Neighborhood 2.mp3',
+    '/The Sims Soundtrack_ Neighborhood 4.mp3'
+
+
   ];
 
   const gifArr = [
@@ -82,55 +95,65 @@ export default function WindowComp() {
     pixelStatue,
     mikeTyson,
     fzero,
-    computer
+    computer,
+    cyberArt,
+    outsideWindow,
+    blocks,
+    spinning,
   ];
 
   const { username } = useAuth();
+  const { globalZIndex, incrementZIndex } = useZIndex();
 
+
+  
   useEffect(() => {
     // Reset heartClicked to false when changing to a new song
     setheartClicked(false);
   }, [currentSongIndex]);
-  
-  //grab and send favorite song to the User database
-  const sendFavoriteSong = async () => {
 
-    const newHeartClicked = !heartClicked //capture the state in a new variable before async function runs 
-    setheartClicked(newHeartClicked)
-    console.log('newHeartClicked is ', newHeartClicked)
+  // grab and send favorite song to the User database
+  const sendFavoriteSong = async () => {
+    const newHeartClicked = !heartClicked; // capture the state in a new variable before the async function runs
+    setheartClicked(newHeartClicked);
+    console.log('newHeartClicked is ', newHeartClicked);
     try {
       const song = songsArr[currentSongIndex];
-      console.log('song is ', song)
+      console.log('song is ', song);
       setUsersFavoriteSong(song);
-  
+
       if (newHeartClicked === false) {
         return; // Exit early if sendSong is false
       }
-  
-      const response = await fetch('http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, favoriteSong: song }),
-      });
-  
+
+      const response = await fetch(
+        'http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, favoriteSong: song }),
+        }
+      );
+
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
       } else {
-        throw new Error(`Failed to send a favorite song. Status: ${response.status}`);
+        throw new Error(
+          `Failed to send a favorite song. Status: ${response.status}`
+        );
       }
     } catch (error) {
       console.error('Error sending favorite song:', error.message);
-      }
+    }
   };
-  
-  
 
   const handleGifChange = () => {
-  // Increment the index, and loop back to the first GIF if at the end
-  const newIndex = (currentGifIndex + 1) % gifArr.length;
-  setCurrentGifIndex(newIndex);
+    // Increment the index, and loop back to the first GIF if at the end
+    const newIndex = (currentGifIndex + 1) % gifArr.length;
+    setCurrentGifIndex(newIndex);
   };
 
   const handleTimeUpdate = () => {
@@ -171,35 +194,54 @@ export default function WindowComp() {
     return array;
   };
 
-  const handleSongEnd = () => {
-    setCurrentSongIndex((prevIndex) => (prevIndex + 1) % songsArr.length);
-    audioRef.current.src = songsArr[currentSongIndex];
-    audioRef.current.play();
+  const playNextSong = () => {
+    const nextIndex = (currentSongIndex + 1) % songsArr.length;
+    setCurrentSongIndex(nextIndex);
+
+    audioRef.current.src = songsArr[nextIndex];
+    audioRef.current.currentTime = 0;
+
+    audioRef.current.addEventListener('canplay', () => {
+      const currentSongName = 'Now Playing: ' + songsArr[nextIndex];
+      setScrollingText(currentSongName);
+      setSliderValue(0); // Reset slider when audio starts playing
+      setMaxSliderValue(audioRef.current.duration); // Update max value
+      audioRef.current.play();
+    });
   };
+
+  const handleMouseDown = () => {
+    console.log('mouse down! from WindowComp' + globalZIndex)
+    incrementZIndex()
+    setLocalZIndex(globalZIndex + 1)
+  }
 
   const handlePlayClick = () => {
     const audio = audioRef.current;
-  
+
     if (!isAudioPlaying) {
       setIsAudioPlaying(true);
-  
+
+      // Check if the audio source needs to be updated
       if (!audio || audio.src !== songsArr[currentSongIndex]) {
         const newAudio = new Audio(songsArr[currentSongIndex]);
-        newAudio.addEventListener('ended', handleSongEnd);
+        newAudio.addEventListener('ended', playNextSong);
         audioRef.current = newAudio;
       }
-  
+
+      // Add event listeners before playing
       audioRef.current.addEventListener('canplay', () => {
         const currentSongName = 'Now Playing: ' + songsArr[currentSongIndex];
         setScrollingText(currentSongName);
         setSliderValue(0); // Reset slider when audio starts playing
         setMaxSliderValue(audioRef.current.duration); // Update max value
-        audioRef.current.play();
-  
-        // Additional event listeners for audio control
-        audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
-        audioRef.current.addEventListener('ended', handleSongEnd); // Add ended event listener here as well
       });
+
+      audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
+      audioRef.current.addEventListener('ended', playNextSong);
+
+      // Play the audio
+      audioRef.current.play();
     } else {
       audioRef.current.pause();
       setIsAudioPlaying(false);
@@ -208,26 +250,29 @@ export default function WindowComp() {
 
   const handleShuffleClick = () => {
     const shuffledSongs = shuffle([...songsArr]);
-  
+
     if (audioRef.current) {
       // Find the index of the shuffled song in the original songsArr
       const shuffledIndex = songsArr.indexOf(shuffledSongs[0]);
-  
+
       setCurrentSongIndex(shuffledIndex);
-  
+
       audioRef.current.src = shuffledSongs[0];
       audioRef.current.play();
       setIsAudioPlaying(true);
-  
+
       audioRef.current.addEventListener('canplay', () => {
         const currentSongName = 'Now Playing: ' + shuffledSongs[0];
         setScrollingText(currentSongName);
         setSliderValue(0); // Reset slider when audio starts playing
         setMaxSliderValue(audioRef.current.duration); // Update max value
       });
+
+      // Continue playing shuffled songs without stopping
+      audioRef.current.addEventListener('ended', handleShuffleClick);
     }
   };
-  
+
   const handlePauseClick = () => {
     const audio = audioRef.current;
 
@@ -247,17 +292,7 @@ export default function WindowComp() {
   };
 
   const handleNextClick = () => {
-    const nextIndex = (currentSongIndex + 1) % songsArr.length;
-    setCurrentSongIndex(nextIndex);
-    audioRef.current.src = songsArr[nextIndex];
-    audioRef.current.play();
-
-    audioRef.current.addEventListener('canplay', () => {
-      const currentSongName = 'Now Playing: ' + songsArr[nextIndex];
-      setScrollingText(currentSongName);
-      setSliderValue(0); // Reset slider when audio starts playing
-      setMaxSliderValue(audioRef.current.duration); // Update max value
-    });
+    playNextSong();
   };
 
   const handlePreviousClick = () => {
@@ -306,18 +341,29 @@ export default function WindowComp() {
   };
 
   return (
-    <Draggable handle=".window-header">
-      <div style={{ position: 'fixed', margin: '6vw 2vw 0vw 0vw', padding: '0', top: '0', right: '0' }}>
+    <Draggable onMouseDown={handleMouseDown} handle=".window-header">
+      <div
+        style={{
+          // position: 'fixed',
+          // marginTop: '5vw',
+          padding: '0',
+          top: '0',
+          right: '0',
+          // border: '1px solid red',
+          zIndex: localZIndex
+        }}
+      >
         <Window
+          className="animate__animated animate__rubberBand"
           style={{ maxWidth: '250px' }}
         >
           <WindowHeader className="window-header">
             <span className="CdMusic_16x16_4"></span>
-            Tunes.exe
+            {' '}Tunes.exe
           </WindowHeader>
 
           <Toolbar noPadding>
-            <Button variant="thin" >Favorites</Button>
+            <Button variant="thin">Favorites</Button>
 
             <Button variant="thin" onClick={handleSaveClick}>
               Save
@@ -329,20 +375,28 @@ export default function WindowComp() {
                 alignSelf: 'left',
               }}
             >
-              <Button variant="thin" onClick={() => setOpen(!open)} active={open}>
+              <Button
+                variant="thin"
+                onClick={() => setOpen(!open)}
+                active={open}
+              >
                 Music
               </Button>
               {/* Show heart when music is playing */}
               {isAudioPlaying && (
-                <Tooltip text={heartClicked ? 'Favorited!' : 'Click to favorite!'}>
+                <Tooltip
+                  text={heartClicked ? 'Favorited!' : 'Click to favorite!'}
+                >
                   <FontAwesomeIcon
-                   className={`animate__animated ${heartClicked ? 'animate__heartBeat' : ''}`}
-                   style={{
-                     marginLeft: '8px',
-                     color: heartClicked ? 'red' : undefined,
-                   }}
-                   onClick={sendFavoriteSong}
-                   icon={heartClicked ? soildHeart : faHeart}
+                    className={`animate__animated ${
+                      heartClicked ? 'animate__heartBeat' : ''
+                    }`}
+                    style={{
+                      marginLeft: '8px',
+                      color: heartClicked ? 'red' : undefined,
+                    }}
+                    onClick={sendFavoriteSong}
+                    icon={heartClicked ? soildHeart : faHeart}
                   />
                 </Tooltip>
               )}
@@ -392,12 +446,15 @@ export default function WindowComp() {
 
                   <Image
                     onClick={handleGifChange}
-                    style={{ opacity: '70%', width: '100%', height: '100%' }}
+                    style={{
+                      opacity: '70%',
+                      width: '100%',
+                      height: '100%',
+                    }}
                     src={gifArr[currentGifIndex]}
                     alt="currentgif"
-                    title='Click me to change!'
+                    title="Click me to change!"
                   />
-
                 </>
               )}
               <input

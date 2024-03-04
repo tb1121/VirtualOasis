@@ -10,6 +10,7 @@ const loginRouter = require('./routes/login');
 const signupRouter = require('./routes/signup');
 const saveNotesRouter = require('./routes/saveNotes');
 const saveFavoriteSongRouter = require('./routes/saveFavoriteSong')
+const searchInternet = require('./routes/searchInternet');
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://Taylor:PNJ009ylWsBLcTIi@assessment.i6oru1a.mongodb.net/', {
@@ -23,10 +24,11 @@ db.once('open', () => {
 });
 
 // Set up routes with appropriate prefixes
-app.use('/api', signupRouter);
-app.use('/api', loginRouter);
+app.use('/api/', signupRouter);
+app.use('/api/', loginRouter);
 app.use('/api/notes', saveNotesRouter);
 app.use('/api/saveFavoriteSong', saveFavoriteSongRouter);
+app.use('/api/internet', searchInternet);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

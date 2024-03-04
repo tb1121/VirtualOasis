@@ -7,12 +7,13 @@ import {
   MenuList,
   MenuListItem,
   Separator,
+  Tooltip
 } from 'react95';
 import Image from 'next/image';
 import logoIMG from '../public/Winlogo.ico';
 import { useAuth } from './AuthContext';
 import Link from 'next/link';
-import { original, matrix, vaporTeal, olive, travel, rainyDay, aiee, candy, coldGray, darkTeal, fxDev, marine, ninjaTurtles, peggysPastels, polarized, seawater, solarizedDark, solarizedLight } from 'react95/dist/themes'; 
+import { original, matrix, vaporTeal, olive, travel, rainyDay, aiee, candy, coldGray, darkTeal, fxDev, marine, ninjaTurtles, peggysPastels, polarized, seawater, solarizedDark, solarizedLight, eggplant, spruce, stormClouds, windows1, wmii, water } from 'react95/dist/themes'; 
 
 const Navbar = ({ handleThemeChange }) => {
   const [open, setOpen] = useState(false);
@@ -43,7 +44,13 @@ const Navbar = ({ handleThemeChange }) => {
     { name: 'Polarized', theme: polarized },
     { name: 'Seawater', theme: seawater },
     { name: 'SolarizedDark', theme: solarizedDark },
-    { name: 'SolarizedLight', theme: solarizedLight }
+    { name: 'SolarizedLight', theme: solarizedLight },
+    { name: 'EggPlant', theme: eggplant },
+    { name: 'Spruce', theme: spruce },
+    { name: 'StormClouds', theme: stormClouds },
+    { name: 'Windows1', theme: windows1 },
+    { name: 'Wmii', theme: wmii },
+    { name: 'Water', theme: water }
   ];
 
   const firstColumn = themeOptions.slice(0, Math.ceil(themeOptions.length / 2));

@@ -3,10 +3,12 @@ import Draggable from 'react-draggable';
 import { Button, Window, WindowContent, WindowHeader, TextInput } from 'react95';
 import { useAuth } from '../components/AuthContext';
 import 'animate.css';
+import { useZIndex } from './ZIndexContext';
 
 export default function Notes({ notesData, setNotesData }) {
   const { username } = useAuth();
   const { isLoggedIn } = useAuth();
+  const { globalZIndex, incrementZIndex } = useZIndex();
   console.log('Username: ', username);
   console.log('isLoggedIn: ', isLoggedIn);
   const [content, setContent] = useState('');
@@ -15,8 +17,14 @@ export default function Notes({ notesData, setNotesData }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newNoteButtonPressed, setNoteButtonPressed] = useState(false)
   const [firstPreviousPressed, setFirstPreviousPressed] = useState(false)
+  const [localZIndex, setLocalZIndex] = useState(3);
+
   const [disableNext, setDisableNext] = useState(false)
 
+
+
+
+  
   useEffect(() => {
     // Set content to the most recent note
     setContent(notesData[notesData.length - 1]);
@@ -97,7 +105,11 @@ export default function Notes({ notesData, setNotesData }) {
     }
   };
   
-  
+  const handleMouseDown = () => {
+    console.log('mouse down from Notes!' + globalZIndex)
+    incrementZIndex()
+    setLocalZIndex(globalZIndex + 1)
+  }
 
   const saveNotes = async () => {
   // Save the current note
@@ -131,12 +143,8 @@ export default function Notes({ notesData, setNotesData }) {
       setSavedNote(false);
     }, 2000);
   
-  }else{
- 
-  // setContent(newData[newData.length - 1]);
-  
-
-  // Update the parent component's notesData (assuming setNotesData is a state in the parent component)
+  }
+  else{
   setNotesData(newData);
 
   setTimeout(() => {
@@ -149,12 +157,12 @@ export default function Notes({ notesData, setNotesData }) {
   
 
   return (
-    <Draggable handle=".window-header" style={{ position: 'fixed' }}>
-      <div style={{ position: 'fixed', margin: '10vw 3vw 0vw 0vw', padding: '0', top: '0', right: '0' }}>
-        <Window>
+    <Draggable onMouseDown={handleMouseDown} handle=".window-header" style={{  }}>
+      <div style={{ zIndex: localZIndex, padding: '0', top: '0', right: '0' }}>
+        <Window className={`animate__animated ${savedNote ? 'animate__flip' : 'animate__animated animate__bounce'}`} style={{width: '350px', minWidth: '275px'}}>
           <WindowHeader className="window-header">
             <span className="FilePen_16x16_4"></span>
-            Notes.txt
+            {' '}Notes.txt
           </WindowHeader>
           <WindowContent>
             {savedNote && (
@@ -163,18 +171,25 @@ export default function Notes({ notesData, setNotesData }) {
             <div>
               <TextInput
                 placeholder="Lets get it done!"
-                style={{ minWidth: '22vw', height: '22vw', }}
+                style={{ width: '305px', minHeight: '22vw', height: '22vw', }}
                 multiline
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
             </div>
           </WindowContent>
-          <Button onClick={saveNotes}>Save</Button>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row', // or 'column' for a vertical layout
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}>
+          <Button style={{flex: '1'}} onClick={saveNotes}>Save</Button>
           {/* when I press save here, I want to also grab the entire content again to include the note just saved, so essentially just update content with the most recent saved note */}
-          <Button onClick={handlePreviousNoteClick}>Previous</Button>
-          <Button disabled={disableNext} onClick={handleNextNoteClick}>Next</Button>
-          <Button onClick={handleNewNoteClickandSaveCurrentNote}>New Note</Button>
+          <Button  style={{flex: '1'}}onClick={handlePreviousNoteClick}>Previous</Button>
+          <Button  style={{flex: '1'}}disabled={disableNext} onClick={handleNextNoteClick}>Next</Button>
+          <Button  style={{padding: '8px', flex: '1'}}onClick={handleNewNoteClickandSaveCurrentNote}>New Note</Button>
+          </div>
         </Window>
       </div>
     </Draggable>

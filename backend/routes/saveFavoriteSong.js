@@ -8,19 +8,22 @@ router.post('/sendFavoriteSong', async (req, res) => {
   
   try {
     const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
     
-    // Check if the user exists
-    if (user) {
+    const existingContent = user.favoriteSongs.find(savedSong => savedSong === favoriteSong);
+
+    if (existingContent) {
+      return res.status(200).json({ message: 'Song already saved!' });
+    }
       // If the user exists, add the favorite song to the user's data
       user.favoriteSongs.push(favoriteSong);
       await user.save();
   
       return res.status(200).json({ message: 'Song saved!' });
 
-    } else {
-      // If the user doesn't exist
-      return res.status(404).json({ message: 'User not found' });
-    }
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal Server Error' });

@@ -3,6 +3,8 @@
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
 import { AuthProvider } from '../../components/AuthContext';
+import { ZIndexProvider } from '../../components/ZIndexContext';
+
 import GlobalStyles from '../styles/GlobalStyles';
 import { original } from 'react95/dist/themes';
 // import matrix from 'react95/dist/themes/matrix';
@@ -19,10 +21,12 @@ function App({ Component, pageProps }) {
   
   return (
     <AuthProvider>
+      <ZIndexProvider>
         <ThemeProvider theme={theme}>
           <GlobalStyles />
           <Component {...pageProps} theme={theme} handleThemeChange={handleThemeChange} />
         </ThemeProvider>
+      </ZIndexProvider>
     </AuthProvider>
   );
 }

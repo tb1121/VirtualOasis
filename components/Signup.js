@@ -93,9 +93,16 @@ export default function Signup() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row', // or 'column' for a vertical layout
+                justifyContent: 'space-around',
+                alignItems: 'center',
+              }}>
               <Button className="bg-blue-500 text-white p-2 rounded w-full" type="submit">
                 Signup
               </Button>
+              </div>
             </form>
           </div>
         </Window>
