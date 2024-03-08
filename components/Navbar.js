@@ -112,8 +112,10 @@ const Navbar = ({ handleThemeChange }) => {
           )}
         </div>
         {isLoggedIn && username && (
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <p>Welcome <span style={{ fontWeight: 'bold'}}>{username}</span>!</p>
-        )}
+        </div>
+      )}
         {/* Theme button and options */}
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <Button

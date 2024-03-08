@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '@react95/icons/icons.css';
 import { useAuth } from './AuthContext';
 import WindowComp from './WindowComp';
 import Notes from './Notes';
 import Internet from './Internet';
-import { useState, useEffect } from 'react';
-import 'animate.css';
+import Weather from './Weather'
 
-const StackedDivs = () => {
+
+const StackedDivs = ({ theme }) => {
   const { isLoggedIn, username } = useAuth();
   const [notesData, setNotesData] = useState('');
+  const [isTunesOpen, setIsTunesOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isInternetOpen, setIsInternetOpen] = useState(false);
+  const [isWeatherOpen, setIsWeatherOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -17,24 +21,15 @@ const StackedDivs = () => {
     }
   }, [isLoggedIn]);
 
-  const [clicked, setClicked] = useState(false);
-  const [isTunesOpen, setIsTunesOpen] = useState(false);
-  const [isNotesOpen, setIsNotesOpen] = useState(false);
-  const [isInternetOpen, setIsInternetOpen] = useState(false);
-
-  const handleTunesClick = () => {
-    if (isLoggedIn) {
-      setClicked(!clicked);
-      setIsTunesOpen(!clicked);
-    } else {
-      alert('Please login!');
+  const toggleTunes = () => {
+    if (isLoggedIn){
+    setIsTunesOpen(prevState => !prevState);
     }
   };
 
-  const handleNotesClick = async () => {
+  const toggleNotes = async () => {
     if (isLoggedIn) {
-      setClicked(!clicked);
-      setIsNotesOpen(!clicked);
+      setIsNotesOpen(prevState => !prevState);
 
       if (!isNotesOpen) {
         try {
@@ -61,21 +56,16 @@ const StackedDivs = () => {
     }
   };
 
-  const handleInternetClick = () => {
-    if (isLoggedIn) {
-      setClicked(!clicked);
-      setIsInternetOpen(!clicked);
-    } else {
-      alert('Please login!');
+  const toggleInternet = () => {
+    if (isLoggedIn){
+    setIsInternetOpen(prevState => !prevState);
     }
   };
 
-  const handleDiv3Click = () => {
-    console.log('Div 3 clicked!');
-  };
-
-  const handleDiv4Click = () => {
-    console.log('Div 4 clicked!');
+  const toggleWeather = () => {
+    if (isLoggedIn){
+    setIsWeatherOpen(prevState => !prevState);
+    }
   };
 
   const handleDiv5Click = () => {
@@ -86,22 +76,22 @@ const StackedDivs = () => {
     {
       iconClass: 'CdMusic_32x32_4',
       text: 'Tunes.exe',
-      onClick: handleTunesClick,
+      onClick: toggleTunes,
     },
     {
       iconClass: 'FilePencil_32x32_4',
       text: 'Notes.txt',
-      onClick: handleNotesClick,
+      onClick: toggleNotes,
     },
     {
-      iconClass: 'Explorer100_32x32_4',
+      iconClass: 'ComputerFind_32x32_4',
       text: 'Internet.exe',
-      onClick: handleInternetClick,
+      onClick: toggleInternet,
     },
     {
-      iconClass: 'YourNextIconClass',
-      text: '',
-      onClick: handleDiv4Click,
+      iconClass: 'Explore_32x32_4',
+      text: 'Weather.exe',
+      onClick: toggleWeather,
     },
     {
       iconClass: 'YourNextIconClass',
@@ -114,7 +104,7 @@ const StackedDivs = () => {
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '6vw 2vw 0vw 1vw' }}>
         {divsContent.map((content, index) => (
-          <div key={index} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div key={index} style={{ color: theme, marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span
               className={content.iconClass}
               onClick={content.onClick}
@@ -126,14 +116,14 @@ const StackedDivs = () => {
           </div>
         ))}
       </div>
-      <div style={{minWidth: '100%', minHeight: '100%', display: 'flex', justifyContent: 'space-around', flexDirection: 'row', marginTop: '6vw', marginLeft:'1.6vw'}}>
-        {isTunesOpen && <WindowComp style={{}}isTunesOpen={isTunesOpen} setIsTunesOpen={setIsTunesOpen} onClose={() => setIsTunesOpen(false)} />}
-        {isInternetOpen && <Internet />}
+      <div style={{rowGap: '2vw', flexWrap: 'wrap', minWidth: '85vw', minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', margin: '6vw .5vw 0vw .5vw' }}>
+        {isTunesOpen && <WindowComp isTunesOpen={isTunesOpen} setIsTunesOpen={setIsTunesOpen} onClose={() => setIsTunesOpen(false)} />}
+        {isInternetOpen && <Internet onClose={() => setIsInternetOpen(false)} />}
         {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} onClose={() => setIsNotesOpen(false)} />}
-        
+        {isWeatherOpen && <Weather onClose={() => setIsWeatherOpen(false)} />}
       </div>
     </div>
   );
 };
 
-export default StackedDivs;
+export default StackedDivs

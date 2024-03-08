@@ -29,7 +29,6 @@ const HomePage = ({ handleThemeChange, theme }) => {
           {isLoggedIn && (
             
               <div
-                className='animate__animated animate__zoomInDown animate__delay-2s'
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -41,8 +40,8 @@ const HomePage = ({ handleThemeChange, theme }) => {
                   color: theme.anchor,
                 }}
               >
-                <Draggable>
-                <div onClick={handleVirtualOasisClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Draggable handle=".window-header">
+                <div className='animate__animated animate__fadeInUp animate__delay-2s' onClick={handleVirtualOasisClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div style={{ color: theme, zIndex: 5, fontSize: '7vw', padding: '0', margin: '0 0 -1vw 0' }}>Virtual Oasis</div>
                   <img src={water[0]} alt="Water Image" style={{ height: '5vw', width: '38vw' }} />
                 </div>

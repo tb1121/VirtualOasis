@@ -34,6 +34,11 @@ import cyberArt from '../public/cyberArt.gif';
 import outsideWindow from '../public/outsideWindow.gif';
 import blocks from '../public/blocks.gif';
 import spinning from '../public/spinning.gif';
+import spinningDisk from '../public/spinningDisk.gif';
+import windowsFlag from '../public/windowsFlag.gif';
+import dancingSims from '../public/dancingSims.gif'
+
+
 
 import { useAuth } from './AuthContext';
 
@@ -53,6 +58,7 @@ export default function WindowComp({isTunesOpen}) {
   const { isLoggedIn } = useAuth();
 
   const songsArr = [
+    '/FLOURISHMID.mp3',
     '/DireDireDocks64.mp3',
     '/VECTORGRAPHICSDESTINE.mp3',
     '/Night Observer - Yusuke Asano.mp3',
@@ -74,12 +80,14 @@ export default function WindowComp({isTunesOpen}) {
     '/PrismCorp Virtual Enterprises - Lifestyles.mp3',
     '/PASSPORTMID.mp3',
     '/CANYONMID.mp3',
-    '/FLOURISHMID.mp3',
     '/Kemmei Adachi - Mirage.mp3',
     '/Pilotwings-Rocketbelt .mp3',
     '/The Sims Soundtrack_ Neighborhood 1.mp3',
     '/The Sims Soundtrack_ Neighborhood 2.mp3',
-    '/The Sims Soundtrack_ Neighborhood 4.mp3'
+    '/The Sims Soundtrack_ Neighborhood 4.mp3',
+    '/Yasuo Sakou - Obrigado! Obrigado!.mp3',
+    '/Gran Turismo 5 OST_ Keiji Inai - In Transit.mp3',
+    '/Dreamy.MID.mp3',
 
 
   ];
@@ -100,14 +108,16 @@ export default function WindowComp({isTunesOpen}) {
     outsideWindow,
     blocks,
     spinning,
+    spinningDisk,
+    windowsFlag,
+    dancingSims
   ];
 
   const { username } = useAuth();
   const { globalZIndex, incrementZIndex } = useZIndex();
 
 
-  
-  useEffect(() => {
+    useEffect(() => {
     // Reset heartClicked to false when changing to a new song
     setheartClicked(false);
   }, [currentSongIndex]);
@@ -197,18 +207,26 @@ export default function WindowComp({isTunesOpen}) {
   const playNextSong = () => {
     const nextIndex = (currentSongIndex + 1) % songsArr.length;
     setCurrentSongIndex(nextIndex);
-
+  
     audioRef.current.src = songsArr[nextIndex];
-    audioRef.current.currentTime = 0;
-
+  
     audioRef.current.addEventListener('canplay', () => {
       const currentSongName = 'Now Playing: ' + songsArr[nextIndex];
       setScrollingText(currentSongName);
       setSliderValue(0); // Reset slider when audio starts playing
-      setMaxSliderValue(audioRef.current.duration); // Update max value
+      setMaxSliderValue(); // Update max value
       audioRef.current.play();
     });
+  
+    audioRef.current.addEventListener('ended', playNextSong);
+  
+    audioRef.current.pause(); // Pause the current audio
+    audioRef.current.removeEventListener('canplay', handleTimeUpdate);
+    audioRef.current.removeEventListener('ended', playNextSong);
   };
+  
+  
+  
 
   const handleMouseDown = () => {
     console.log('mouse down! from WindowComp' + globalZIndex)

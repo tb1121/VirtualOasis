@@ -18,11 +18,7 @@ export default function Notes({ notesData, setNotesData }) {
   const [newNoteButtonPressed, setNoteButtonPressed] = useState(false)
   const [firstPreviousPressed, setFirstPreviousPressed] = useState(false)
   const [localZIndex, setLocalZIndex] = useState(3);
-
   const [disableNext, setDisableNext] = useState(false)
-
-
-
 
   
   useEffect(() => {

@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import Draggable from 'react-draggable';
 import { Button, ScrollView, TextInput, Window, WindowContent, WindowHeader } from 'react95';
 import { useZIndex } from './ZIndexContext';
+import 'animate.css';
 
 export default function Internet() {
   const [searchQuery, setSearchQuery] = useState('');
   const [localZIndex, setLocalZIndex] = useState(3);
   const [searchResults, setSearchResults] = useState([]);
+  const [clicked, setClicked] = useState(false);
   const { globalZIndex, incrementZIndex } = useZIndex();
 
   const handleMouseDown = () => {
@@ -15,6 +17,7 @@ export default function Internet() {
   };
 
   const handleSearch = async () => {
+    setClicked(true)
     try {
       const response = await fetch('http://localhost:3001/api/internet/getResults', {
         method: 'POST',
@@ -29,6 +32,11 @@ export default function Internet() {
       setSearchResults(data.items);
     } catch (error) {
       console.error('Error during search:', error);
+    }finally {
+      // Use setTimeout to delay setting 'clicked' to false, allowing time for the animation
+      setTimeout(() => {
+        setClicked(false);
+      }, 1000); // You can a
     }
   };
 
@@ -41,15 +49,15 @@ export default function Internet() {
   return (
     <Draggable onMouseDown={handleMouseDown} handle=".window-header">
       <div style={{ zIndex: localZIndex, padding: '0', top: '0', right: '0' }}>
-        <Window style={{ width: '350px', minWidth: '275px'}}>
+        <Window style={{ width: '350px', minWidth: '275px' }}>
           <WindowHeader className="window-header">
             <span className="Explorer100_16x16_4"></span>
             {' '}
             Internet.exe
           </WindowHeader>
-          <WindowContent style={{ maxHeight: '400px', overflowY: 'auto' }}>
+          <WindowContent style={{ maxHeight: '450px' }}>
             <div>
-              <div style={{ fontSize: '5vw' }}>
+              <div className='animate__animated animate__backInRight' style={{ fontSize: '5vw' }}>
                 <span style={{ color: '#4285F4' }}>G</span>
                 <span style={{ color: '#EA4335' }}>o</span>
                 <span style={{ color: '#FBBC05' }}>o</span>
@@ -63,37 +71,35 @@ export default function Internet() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
               />
-              <Button onClick={handleSearch}>Search</Button>
+              <Button className={clicked?'animate__animated animate__tada': ''} onClick={handleSearch}>Search</Button>
             </div>
-            
-{searchResults.length > 0 && (
-  <ScrollView >
-    <div>
-      <h2 style={{fontWeight: 'bold'}}>Search Results:</h2>
-      <br></br>
-      <ul>
-        {searchResults.map((result, index) => (
-          <li key={index} style={{
-            marginBottom: '10px',
-            borderBottom: '1px solid black',
-            paddingBottom: '10px',
-            listStyle: 'none', // Remove default list styling
-          }}>
-            <a style={{ color: 'blue' }} href={result.link} target="_blank" rel="noopener noreferrer">
-              {result.link}
-            </a>
-            <br></br>
-            <strong style={{fontWeight: 'bold'}}>{result.title}</strong>
-            <br></br>
-            <p>{result.snippet}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </ScrollView>
-)}
+            {searchResults.length > 0 && (
+              <ScrollView style={{ width: '305px', height: '180px' }}>
+                <div>
+                  <h2 style={{ fontWeight: 'bold' }}>Search Results:</h2>
+                  <br></br>
+                  <ul>
+                    {searchResults.map((result, index) => (
+                      <li key={index} style={{
+                        marginBottom: '10px',
+                        borderBottom: '1px solid black',
+                        paddingBottom: '10px',
+                        listStyle: 'none', // Remove default list styling
+                      }}>
+                        <a style={{ color: 'blue' }} href={result.link} target="_blank" rel="noopener noreferrer">
+                          {result.link}
+                        </a>
+                        <br></br>
+                        <strong style={{ fontWeight: 'bold' }}>{result.title}</strong>
+                        <br></br>
+                        <p>{result.snippet}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollView>
+            )}
           </WindowContent>
-          
         </Window>
       </div>
     </Draggable>
