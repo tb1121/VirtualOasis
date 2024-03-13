@@ -30,13 +30,15 @@ router.post('/sendFavoriteSong', async (req, res) => {
   }
 });
 
-router.get('/getAllFavoriteSongs:username', async (req, res) => {
+router.get('/grabAllSongs/:username', async (req, res) => {
   try{
   const { username } = req.params;
-  const user = await User.findOne(username)
+  console.log(username)
+  const user = await User.findOne({username})
+  
   //if user is found, grab the song array
   if(user){
-    const songsArr =  user.favoriteSongs
+    const songsArr = user.favoriteSongs
     res.status(200).json({songs: songsArr});
   }
   else{

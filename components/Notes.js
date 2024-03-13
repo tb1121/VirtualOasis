@@ -102,7 +102,6 @@ export default function Notes({ notesData, setNotesData }) {
   };
   
   const handleMouseDown = () => {
-    console.log('mouse down from Notes!' + globalZIndex)
     incrementZIndex()
     setLocalZIndex(globalZIndex + 1)
   }

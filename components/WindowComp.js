@@ -37,29 +37,37 @@ import spinning from '../public/spinning.gif';
 import spinningDisk from '../public/spinningDisk.gif';
 import windowsFlag from '../public/windowsFlag.gif';
 import dancingSims from '../public/dancingSims.gif'
+import n64 from '../public/n64.gif';
+import pixelMac from '../public/pixelMac.gif';
 
 
 
 import { useAuth } from './AuthContext';
 
 export default function WindowComp({isTunesOpen}) {
-  const [open, setOpen] = useState(false);
+  const [musicOpen, setMusicOpen] = useState(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [heartClicked, setheartClicked] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioRef = useRef();
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [scrollingText, setScrollingText] = useState('');
+  const [favoriteScrollingText, setFavoriteScrollingText] = useState('')
+  const [forceText, setForceText] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const [sliderMax, setSliderMax] = useState(100); // Initial max
   const [currentGifIndex, setCurrentGifIndex] = useState(0);
   const [localZIndex, setLocalZIndex] = useState(3);
+  const [UpdatedFavSongsArray, setUpdatedFavSongsArray] = useState([])
+  const [shufflingFavorites, setShufflingFavorites] = useState(false);
+  const [shuffledFavorite, setShuffledFavorite] = useState('')
   const [favoritedSongs, setFavoritedSongs] = useState([]);
+  const [songWasDeleted, setSongWasDeleted] = useState(false);
   const [usersFavoriteSong, setUsersFavoriteSong] = useState('');
   const { isLoggedIn } = useAuth();
 
   const songsArr = [
     '/FLOURISHMID.mp3',
-    '/DireDireDocks64.mp3',
     '/VECTORGRAPHICSDESTINE.mp3',
     '/Night Observer - Yusuke Asano.mp3',
     '/Dance Off.mp3',
@@ -88,6 +96,16 @@ export default function WindowComp({isTunesOpen}) {
     '/Yasuo Sakou - Obrigado! Obrigado!.mp3',
     '/Gran Turismo 5 OST_ Keiji Inai - In Transit.mp3',
     '/Dreamy.MID.mp3',
+    '/Express Way - Daisuke Kawai (Gran Turismo 6).mp3',
+    '/Gran Turismo 5 OST_ Makoto - Winter Dreams.mp3',
+    '/Dan Mason - Make Me Love You.mp3',
+    '/Dan Mason - Miami Virtual.mp3',
+    '/Donkey Kong Country - Aquatic Ambience [Restored].mp3',
+    '/Donkey Kong Country - Ice Cave Chant [Restored].mp3',
+    '/Super Mario 64 Remastered - File Select.mp3',
+    '/Super Mario 64 Remastered - Inside the Castle Walls.mp3',
+    '/Super Mario 64 Remastered - Dire, Dire Docks.mp3'
+
 
 
   ];
@@ -110,7 +128,9 @@ export default function WindowComp({isTunesOpen}) {
     spinning,
     spinningDisk,
     windowsFlag,
-    dancingSims
+    dancingSims, 
+    n64,
+    pixelMac
   ];
 
   const { username } = useAuth();
@@ -119,46 +139,269 @@ export default function WindowComp({isTunesOpen}) {
 
     useEffect(() => {
     // Reset heartClicked to false when changing to a new song
+    if(!shufflingFavorites){
     setheartClicked(false);
+    }
   }, [currentSongIndex]);
 
-  // grab and send favorite song to the User database
-  const sendFavoriteSong = async () => {
-    const newHeartClicked = !heartClicked; // capture the state in a new variable before the async function runs
-    setheartClicked(newHeartClicked);
-    console.log('newHeartClicked is ', newHeartClicked);
+  //new request if im shuffling favorites
+  const removeFavoriteSong = async () => {
     try {
-      const song = songsArr[currentSongIndex];
-      console.log('song is ', song);
-      setUsersFavoriteSong(song);
-
-      if (newHeartClicked === false) {
-        return; // Exit early if sendSong is false
+      // If heartClicked is false, set it to true and save it to the database
+      if (heartClicked === false) {
+        setheartClicked(true);
+  
+        // Send a POST request to add the shuffledFavorite to favorites
+        const addSongResponse = await fetch(
+          'http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, favoriteSong: shuffledFavorite }),
+          }
+        );
+  
+        if (addSongResponse.ok) {
+          const data = await addSongResponse.json();
+          console.log(data);
+  
+          // Update the local state to add the favorited song
+          setFavoritedSongs((prevFavoritedSongs) => [
+            ...prevFavoritedSongs,
+            shuffledFavorite,
+          ]);
+          return
+        } else {
+          throw new Error(
+            `Failed to send a favorite song. Status: ${addSongResponse.status}`
+          );
+          
+        }
       }
-
-      const response = await fetch(
-        'http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong',
+    } catch (error) {
+      console.error('Error adding favorite song:', error.message);
+    }
+  
+    try {
+      // Send a DELETE request to remove the shuffledFavorite from favorites
+      const deleteResponse = await fetch(
+        'http://localhost:3001/api/deleteSongs/deleteFavoriteSong',
         {
-          method: 'POST',
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ username, favoriteSong: song }),
+          body: JSON.stringify({ username, favoriteSong: shuffledFavorite }),
         }
       );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+  
+      if (deleteResponse.ok) {
+        // Set heartClicked to false after successfully removing the song
+        //here, I need to grab all of the songs from the database again after deletion
+        setSongWasDeleted(true)
+        handleUpdateGrabAllFavoriteSongs()
+        setheartClicked(false);
+  
+        // Update the local state to remove the unfavorited song
+        setFavoritedSongs((prevFavoritedSongs) =>
+          prevFavoritedSongs.filter((favSong) => favSong !== shuffledFavorite)
+        );
       } else {
         throw new Error(
-          `Failed to send a favorite song. Status: ${response.status}`
+          `Failed to delete the favorite song. Status: ${deleteResponse.status}`
         );
       }
     } catch (error) {
-      console.error('Error sending favorite song:', error.message);
+      console.error('Error removing favorite song:', error.message);
     }
   };
+  
+  
+
+  // grab and send favorite song to the User database
+  const sendFavoriteSong = async () => {
+    try {
+      const song = songsArr[currentSongIndex]; 
+      const newHeartClicked = !heartClicked;
+      setheartClicked(newHeartClicked);
+  
+      if (!newHeartClicked) {
+        // Logic to delete the favorite song from the database
+        const response = await fetch(
+          'http://localhost:3001/api/deleteSongs/deleteFavoriteSong',
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, favoriteSong: song }),
+          }
+        );
+  
+        if (response.ok) {
+          // Update the local state to remove the unfavorited song
+          setFavoritedSongs((prevFavoritedSongs) =>
+            prevFavoritedSongs.filter((favSong) => favSong !== song)
+          );
+        } else {
+          throw new Error(
+            `Failed to delete the favorite song. Status: ${response.status}`
+          );
+        }
+      } else {
+        // Logic to send the favorite song to the database
+        const response = await fetch(
+          'http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, favoriteSong: song }),
+          }
+        );
+  
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          // Update the local state to add the favorited song
+          setFavoritedSongs((prevFavoritedSongs) => [
+            ...prevFavoritedSongs,
+            song,
+          ]);
+        } else {
+          throw new Error(
+            `Failed to send a favorite song. Status: ${response.status}`
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error updating favorite song:', error.message);
+    }
+  };
+
+
+  
+  const handleShuffleAllFavoriteSongs = () => {
+    setFavoritesOpen((prevOpen) => !prevOpen);
+    setForceText(true);
+    setheartClicked(true)
+    setShufflingFavorites(true)
+  
+    // Pause the current song
+    audioRef.current.pause();
+  
+    // Shuffle the array
+    const shuffledArray = shuffle([...UpdatedFavSongsArray]);
+  
+    // Set the source of the audio to the first song in the shuffled array
+    audioRef.current.src = shuffledArray[0];
+    setShuffledFavorite(shuffledArray[0])
+  
+    // Set up event listener for when the audio can play
+    const onCanPlay = () => {
+      const currentSongName = 'Now Playing: ' + shuffledArray[0];
+      console.log(currentSongName);
+      setFavoriteScrollingText(currentSongName);
+      setSliderValue(0); // Reset slider when audio starts playing
+      setMaxSliderValue(); // Update max value
+      setIsAudioPlaying(true); // Make sure to set isAudioPlaying to true
+    };
+  
+    // Set up event listener for when the audio ends
+    const onEnded = () => {
+      // Play the next shuffled song
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * shuffledArray.length);
+      } while (nextIndex === currentSongIndex);
+  
+      setCurrentSongIndex(nextIndex);
+      audioRef.current.src = shuffledArray[nextIndex];
+      audioRef.current.play();
+    };
+  
+    audioRef.current.removeEventListener('canplay', onCanPlay);
+    audioRef.current.removeEventListener('ended', onEnded);
+  
+    // Add event listeners to the audio
+    audioRef.current.addEventListener('canplay', onCanPlay);
+    audioRef.current.addEventListener('ended', () => {
+      handleShuffleAllFavoriteSongs();
+      setFavoritesOpen(false);
+    });
+  
+    // Play the shuffled song
+    audioRef.current.play();
+  };
+
+
+  const handleUpdateGrabAllFavoriteSongs = async () => {
+  
+    try {
+      const response = await fetch(`http://localhost:3001/api/saveFavoriteSong/grabAllSongs/${username}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+  );
+  
+      if (response.ok) {
+        const data = await response.json();
+        // Handle the data retrieved from the server
+        console.log(data.songs);
+        setUpdatedFavSongsArray(data.songs)
+      } else {
+        throw new Error(`Failed to grab favorite songs. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error grabbing favorite songs:', error.message);
+    }
+  };
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  const handleGrabAllFavoriteSongs = async () => {
+    
+    setFavoritesOpen(!favoritesOpen)//I want to skip this part of the code if songWasDeleted is true
+    try {
+      const response = await fetch(`http://localhost:3001/api/saveFavoriteSong/grabAllSongs/${username}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+  );
+  
+      if (response.ok) {
+        const data = await response.json();
+        // Handle the data retrieved from the server
+        console.log(data.songs);
+        setUpdatedFavSongsArray(data.songs)
+      } else {
+        throw new Error(`Failed to grab favorite songs. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error grabbing favorite songs:', error.message);
+    }
+  };
+  
+  
+
 
   const handleGifChange = () => {
     // Increment the index, and loop back to the first GIF if at the end
@@ -205,25 +448,28 @@ export default function WindowComp({isTunesOpen}) {
   };
 
   const playNextSong = () => {
-    const nextIndex = (currentSongIndex + 1) % songsArr.length;
-    setCurrentSongIndex(nextIndex);
-  
-    audioRef.current.src = songsArr[nextIndex];
-  
-    audioRef.current.addEventListener('canplay', () => {
-      const currentSongName = 'Now Playing: ' + songsArr[nextIndex];
-      setScrollingText(currentSongName);
-      setSliderValue(0); // Reset slider when audio starts playing
-      setMaxSliderValue(); // Update max value
-      audioRef.current.play();
-    });
-  
-    audioRef.current.addEventListener('ended', playNextSong);
-  
-    audioRef.current.pause(); // Pause the current audio
-    audioRef.current.removeEventListener('canplay', handleTimeUpdate);
-    audioRef.current.removeEventListener('ended', playNextSong);
+  const nextIndex = (currentSongIndex + 1) % songsArr.length;
+  setCurrentSongIndex(nextIndex);
+
+  audioRef.current.src = songsArr[nextIndex];
+
+  const onCanPlay = () => {
+    const currentSongName = 'Now Playing: ' + songsArr[nextIndex];
+    setScrollingText(currentSongName);
+    setSliderValue(0); // Reset slider when audio starts playing
+    setMaxSliderValue(); // Update max value
+    audioRef.current.play();
   };
+
+  audioRef.current.addEventListener('canplay', onCanPlay);
+  audioRef.current.addEventListener('ended', playNextSong);
+
+  audioRef.current.pause(); // Pause the current audio
+};
+
+
+
+
   
   
   
@@ -236,6 +482,8 @@ export default function WindowComp({isTunesOpen}) {
 
   const handlePlayClick = () => {
     const audio = audioRef.current;
+    setForceText(false)
+    setShufflingFavorites(false);
 
     if (!isAudioPlaying) {
       setIsAudioPlaying(true);
@@ -267,6 +515,9 @@ export default function WindowComp({isTunesOpen}) {
   };
 
   const handleShuffleClick = () => {
+    setIsAudioPlaying(true);
+    setForceText(false)
+    setShufflingFavorites(false)
     const shuffledSongs = shuffle([...songsArr]);
 
     if (audioRef.current) {
@@ -310,6 +561,7 @@ export default function WindowComp({isTunesOpen}) {
   };
 
   const handleNextClick = () => {
+    setShufflingFavorites(false);
     playNextSong();
   };
 
@@ -381,7 +633,25 @@ export default function WindowComp({isTunesOpen}) {
           </WindowHeader>
 
           <Toolbar noPadding>
-            <Button variant="thin">Favorites</Button>
+            <Button onClick={(handleGrabAllFavoriteSongs)}//make dropdown appear here after this button is clicked!
+           
+            variant="thin"
+            active={favoritesOpen}>Favorites
+            </Button>
+            {favoritesOpen && (
+              <MenuList
+              style={{
+                position: 'absolute',
+                left: '0',
+                top: '100%',
+                zIndex: '9999',
+              }}
+              >
+                <MenuListItem onClick={handleShuffleAllFavoriteSongs}>
+                  Shuffle
+                </MenuListItem>
+              </MenuList>
+            )}
 
             <Button variant="thin" onClick={handleSaveClick}>
               Save
@@ -395,8 +665,8 @@ export default function WindowComp({isTunesOpen}) {
             >
               <Button
                 variant="thin"
-                onClick={() => setOpen(!open)}
-                active={open}
+                onClick={() => setMusicOpen(!musicOpen)}
+                active={musicOpen}
               >
                 Music
               </Button>
@@ -413,12 +683,13 @@ export default function WindowComp({isTunesOpen}) {
                       marginLeft: '8px',
                       color: heartClicked ? 'red' : undefined,
                     }}
-                    onClick={sendFavoriteSong}
+                    onClick={shufflingFavorites ? removeFavoriteSong : sendFavoriteSong}
+
                     icon={heartClicked ? soildHeart : faHeart}
                   />
                 </Tooltip>
               )}
-              {open && (
+              {musicOpen && (
                 <MenuList
                   style={{
                     position: 'absolute',
@@ -426,7 +697,7 @@ export default function WindowComp({isTunesOpen}) {
                     top: '100%',
                     zIndex: '9999',
                   }}
-                  onClick={() => setOpen(false)}
+                  onClick={() => setMusicOpen(false)}
                 >
                   <MenuListItem onClick={handlePlayClick} size="sm">
                     Play
@@ -452,14 +723,14 @@ export default function WindowComp({isTunesOpen}) {
           </Toolbar>
           <WindowContent style={{ padding: '0.25rem' }}>
             <ScrollView>
-              {isAudioPlaying && (
+              {isAudioPlaying  && (
                 <>
                   <marquee
                     behavior="scroll"
                     direction="left"
                     scrollamount="3"
                   >
-                    {scrollingText}
+                    {forceText ? favoriteScrollingText : scrollingText}
                   </marquee>
 
                   <Image

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Draggable from 'react-draggable';
-import { Button, Window, WindowContent, WindowHeader, TextInput } from 'react95';
+import { Button, Window, WindowContent, WindowHeader, TextInput, Tooltip } from 'react95';
 import { useAuth } from '../components/AuthContext';
 import 'animate.css';
 import { useZIndex } from './ZIndexContext';
@@ -18,10 +18,18 @@ const [condition, setCondition] = useState('');
 const [weatherFound, setWeatherFound] = useState(false)
 const [weatherColor, setWeatherColor] = useState('');
 const [weatherText, setWeatherText] = useState('');
+const [canSetWeather, setCanSetWeather] = useState(false);
+const [weatherClicked, setWeatherClicked] = useState(false);
+const [onOpen, setOnOpen] = useState(true);
 const { globalZIndex, incrementZIndex } = useZIndex();
 const { username } = useAuth();
 
-
+useEffect(() => {
+  if (onOpen) {
+    grabSetWeatherOnOpen();
+    setOnOpen(false); // Set onOpen to false after running the function
+  }
+}, [onOpen]);
 
 const handleMouseDown = () => {
   incrementZIndex();
@@ -33,6 +41,109 @@ const handleKeyPress = (event) => {
     handleWeatherSearch();
   }
 };
+
+const handleSetWeather = async () => {
+  
+  //grab current states(currWeather(number), Location(string), Condition(string))
+  //make post request to backend to save those states on the user
+  try{
+    const response = await fetch('http://localhost:3001/api/findWeather/setWeather', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({currWeather, location, condition, username})
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to save weather data');
+    }
+
+    const data = await response.json()
+    console.log(data)
+    setWeatherText('Weather Saved!')
+
+    setWeatherFound(true)
+
+    setTimeout(()=> {
+      setWeatherFound(false)
+      setWeatherText('')
+    },3000)
+
+
+  }
+
+  catch(error){
+    console.error('Error saving weather data:', error);
+  }
+  //attach this to a set weather button
+}
+
+const grabSetWeatherOnOpen = async () => {
+  //make get request to backend to grab most recent setWeather
+  try{
+  const response = await fetch(`http://localhost:3001/api/findWeather/mostRecentWeatherData/${username}`, 
+
+  {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  
+  if(!response.ok){
+    throw new Error('Failed getting most recent weather data');
+  }
+
+  const data = await response.json()
+  
+  //set states with data
+  setCurrWeather(data.currWeather)
+  setLocation(data.location)
+  setCondition(data.condition)
+  setOnOpen(false)
+
+  const currWeatherNumber = parseFloat(data.currWeather);
+
+    if(currWeatherNumber <= 32){
+      setWeatherColor('lightblue')
+      setWeatherText('\'oooo Chilly!\'')
+    }
+    else if(currWeatherNumber <= 59){
+      setWeatherColor('blue')
+      setWeatherText('\'A bit cold out!\'')
+    }
+    else if(currWeatherNumber <= 79){
+      setWeatherColor('yellow')
+      setWeatherText('\'What a nice day!\'')
+    }
+    else if(currWeatherNumber <= 90){
+      setWeatherColor('orange')
+      setWeatherText('\'Wow, its hot today!\'')
+    }
+    else if(currWeatherNumber <= 130){
+      setWeatherColor('red')
+      setWeatherText('\'Today is a scortcher!\'')
+    }
+    
+
+    setWeatherFound(true)
+
+    setTimeout(()=> {
+      setWeatherFound(false)
+      setWeatherText('')
+    },3000)
+
+}
+catch(error){
+  console.error('Error getting most recent weather data', error)
+}
+  //make state onOpen set to true, 
+  //after this function runs set to false
+  //populate the currWeather, location, and condition states
+  //this function will run once on open only
+}
+
 
 const handleWeatherSearch = async () => {
   //make post request to backend, send User and query
@@ -51,6 +162,7 @@ const handleWeatherSearch = async () => {
     }
 
     const data = await response.json();
+    setCanSetWeather(true)//make a piece of state turn true here, to able the set weather button
     console.log(data)
 
     //handle response and populate component with weather data
@@ -131,7 +243,10 @@ const handleWeatherSearch = async () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={handleKeyPress}
               />
-              <Button onClick={handleWeatherSearch}  >Local Weather</Button>
+              <Button onClick={handleWeatherSearch}>Local Weather</Button>
+              <Tooltip text='Save current weather!'>
+              <Button disabled={!canSetWeather} onClick={handleSetWeather}>Set Weather</Button>
+              </Tooltip>
           </WindowContent>
         </Window>
       </div>

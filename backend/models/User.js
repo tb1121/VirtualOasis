@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 
+const weatherSchema = new mongoose.Schema({
+  currWeather: {
+    type: Number,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  condition: {
+    type: String,
+    required: true,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -21,6 +36,7 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
   ],
+  weatherInfo: [weatherSchema],
 });
 
 const User = mongoose.model('User', userSchema);

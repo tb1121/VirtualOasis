@@ -12,6 +12,7 @@ const saveNotesRouter = require('./routes/saveNotes');
 const saveFavoriteSongRouter = require('./routes/saveFavoriteSong')
 const searchInternet = require('./routes/searchInternet');
 const findWeather = require('./routes/findWeather');
+const deleteSongs = require('./routes/deleteSongs')
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://Taylor:PNJ009ylWsBLcTIi@assessment.i6oru1a.mongodb.net/', {
@@ -31,6 +32,7 @@ app.use('/api/notes', saveNotesRouter);
 app.use('/api/saveFavoriteSong', saveFavoriteSongRouter);
 app.use('/api/internet', searchInternet);
 app.use('/api/findWeather', findWeather);
+app.use('/api/deleteSongs', deleteSongs);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

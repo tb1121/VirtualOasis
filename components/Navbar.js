@@ -127,7 +127,7 @@ const Navbar = ({ handleThemeChange }) => {
           </Button>
           {/* Display theme options menu if themeOpen is true */}
           {themeOpen && (
-            <div style={{ display: 'flex', position: 'absolute', right: '0', top: '100%', zIndex: 10 }}>
+            <div style={{ display: 'flex', position: 'absolute', right: '0', top: '100%', zIndex: 10000 }}>
               <MenuList>
                 {firstColumn.map((option, index) => (
                   <MenuListItem
