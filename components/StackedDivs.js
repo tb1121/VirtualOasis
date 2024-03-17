@@ -5,6 +5,7 @@ import WindowComp from './WindowComp';
 import Notes from './Notes';
 import Internet from './Internet';
 import Weather from './Weather'
+import 'animate.css';
 
 
 const StackedDivs = ({ theme }) => {
@@ -14,6 +15,7 @@ const StackedDivs = ({ theme }) => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isInternetOpen, setIsInternetOpen] = useState(false);
   const [isWeatherOpen, setIsWeatherOpen] = useState(false);
+  const [onOpen, setOnOpen] = useState(true);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -72,6 +74,11 @@ const StackedDivs = ({ theme }) => {
     console.log('Div 5 clicked!');
   };
 
+  setTimeout(() => {
+    setOnOpen(false)
+  }
+  ,4000)
+
   const divsContent = [
     {
       iconClass: 'CdMusic_32x32_4',
@@ -99,12 +106,13 @@ const StackedDivs = ({ theme }) => {
       onClick: handleDiv5Click,
     },
   ];
-
+//import animation
+//set class to ternary, empty if onOpen is false, and animated if onOpen is true.
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '6vw 2vw 0vw 1vw' }}>
         {divsContent.map((content, index) => (
-          <div key={index} style={{ color: theme, marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div key={index} className={`animate__animated animate__zoomIn animate__delay-${index + 1}s`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span
               className={content.iconClass}
               onClick={content.onClick}

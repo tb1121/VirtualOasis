@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import 'animate.css';
 import {
   AppBar,
   Toolbar,
@@ -17,10 +18,10 @@ import { original, matrix, vaporTeal, olive, travel, rainyDay, aiee, candy, cold
 
 const Navbar = ({ handleThemeChange }) => {
   const [open, setOpen] = useState(false);
+  // const [onOpen, setOnOpen] = useState(true);
   const [themeOpen, setThemeOpen] = useState(false);
   const router = useRouter();
   const { Logout, isLoggedIn, username } = useAuth();
-
   const handleLogout = () => {
     Logout();
     router.push('/');
@@ -113,7 +114,7 @@ const Navbar = ({ handleThemeChange }) => {
         </div>
         {isLoggedIn && username && (
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <p>Welcome <span style={{ fontWeight: 'bold'}}>{username}</span>!</p>
+          <p className={isLoggedIn?'animate__animated animate__fadeIn animate__delay-5s animate__slow': ''}>Welcome <span style={{ fontWeight: 'bold'}}>{username}</span>!</p>
         </div>
       )}
         {/* Theme button and options */}

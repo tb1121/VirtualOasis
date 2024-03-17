@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../components/AuthContext';
 import StackedDivs from '../../components/StackedDivs';
+import FloatingButton from '../../components/FloatingButton';
 import MovingText from 'react-moving-text';
 import Draggable from 'react-draggable';
 import 'animate.css';
+
 
 const water = ['/water.gif'];
 const BGs = ['/OasisBG.gif', '/gridBG.gif'];
@@ -26,6 +28,7 @@ const HomePage = ({ handleThemeChange, theme }) => {
         <Navbar handleThemeChange={handleThemeChange} />
         <div style={{ height: '100vh', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', margin: '0', padding: '0' }}>
           {isLoggedIn && <StackedDivs />}
+          {isLoggedIn && <FloatingButton />}
           {isLoggedIn && (
             
               <div
@@ -41,7 +44,7 @@ const HomePage = ({ handleThemeChange, theme }) => {
                 }}
               >
                 <Draggable handle=".window-header">
-                <div className='animate__animated animate__fadeInUp animate__delay-2s' onClick={handleVirtualOasisClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div className='animate__animated animate__fadeInUp animate__delay-5s animate__slow' onClick={handleVirtualOasisClick} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <div style={{ color: theme, zIndex: 5, fontSize: '7vw', padding: '0', margin: '0 0 -1vw 0' }}>Virtual Oasis</div>
                   <img src={water[0]} alt="Water Image" style={{ height: '5vw', width: '38vw' }} />
                 </div>

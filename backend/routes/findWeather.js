@@ -3,9 +3,10 @@ const router = express.Router();
 const axios = require('axios');
 const User = require('../models/User');
 
+const apiKey = 'ec04f3327f67475fbe863228240703';
+
 router.post('/getWeather', async (req, res) => {
   const { searchQuery, username } = req.body;
-  const apiKey = 'ec04f3327f67475fbe863228240703';
   const q = searchQuery;
 
   try {
@@ -25,8 +26,8 @@ router.post('/getWeather', async (req, res) => {
 });
 
 router.post('/setWeather', async (req,res) => {
-  const {currWeather, location, condition, username} = req.body;
-  //currWeather is number, location is string, condition is string
+  const { location, username} = req.body;
+  //just save the location here for mostRecentWeatherData
   try{
     const user = await User.findOne({username})
     if (!user) {
@@ -34,10 +35,10 @@ router.post('/setWeather', async (req,res) => {
     }
 
     const newWeatherEntry = {
-      currWeather,
-      location,
-      condition,
+      location
     }
+    console.log('newWeatherEntry is ', newWeatherEntry)
+    
 
     user.weatherInfo.push(newWeatherEntry)
     await user.save()
@@ -66,8 +67,20 @@ router.get('/mostRecentWeatherData/:username', async (req, res) => {
       return res.status(404).json({ message: 'Weather information not found' });
     }
 
-    const weather = user.weatherInfo[0];
-    return res.send(weather);
+    console.log('user.weatherInfo is' , user.weatherInfo)
+    const location = user.weatherInfo[user.weatherInfo.length -1].location;
+    console.log('location is ', location)
+    
+    const response = await axios.get('http://api.weatherapi.com/v1/current.json', {
+      params: {
+        key: apiKey,
+        q: location,
+      },
+    })
+
+    const weatherData = response.data;
+    res.json(weatherData);
+
   } catch (error) {
     console.error('Error getting weather data:', error);
     res.status(500).json({ message: 'Internal server error' });

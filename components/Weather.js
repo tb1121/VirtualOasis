@@ -44,15 +44,15 @@ const handleKeyPress = (event) => {
 
 const handleSetWeather = async () => {
   
-  //grab current states(currWeather(number), Location(string), Condition(string))
-  //make post request to backend to save those states on the user
+  //here, i need to only send the location, then on the backend just save the location
+  //so i need to modify the user/weather model to hold just a string.
   try{
     const response = await fetch('http://localhost:3001/api/findWeather/setWeather', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({currWeather, location, condition, username})
+      body: JSON.stringify({location, username})
     })
 
     if (!response.ok) {
@@ -79,8 +79,17 @@ const handleSetWeather = async () => {
   //attach this to a set weather button
 }
 
+function convertTo12HourFormat(time) {
+  let [hour, minute] = time.split(":").map(Number);
+  let period = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
+  return `${hour}:${minute < 10 ? "0" : ""}${minute} ${period}`;
+}
+
 const grabSetWeatherOnOpen = async () => {
   //make get request to backend to grab most recent setWeather
+  //here I need to grab the location from the database on the backend, then make an axios request to the weather api with the location
+  //and then populate currWeather, location, and condition with the response.
   try{
   const response = await fetch(`http://localhost:3001/api/findWeather/mostRecentWeatherData/${username}`, 
 
@@ -96,34 +105,82 @@ const grabSetWeatherOnOpen = async () => {
   }
 
   const data = await response.json()
+  console.log('weather data is ', data)
+
+  let dateAndTime = data.location.localtime;
+
+  let timeOnly = dateAndTime.split(" ")[1];
+  let twelveHourTime = convertTo12HourFormat(timeOnly)
+  console.log('time is ', twelveHourTime)
+
+  let AM;
+  let PM;
+
+    if (twelveHourTime.includes('AM')) {
+      AM = 'AM';
+    } else {
+    PM = 'PM';
+    }
+
+// Now you can use the AM and PM variables elsewhere in your code
+
+
+  // Determine the part of the day based on twelveHourTime
+  const hour = parseInt(twelveHourTime.split(":")[0]);
+  console.log('hour is ' , hour)
+
+  //check if AM is populated, else assume PM is populated and check using 12 hour clock
+
+let partOfDay;
+//if am exists
+if(AM === 'AM'){
+  //if the hour is over 5 or under 12, its morning
+  if (hour >= 5 && hour < 12) {
+    partOfDay = "this morning!";
+  }
+}
+//if PM exists
+if(PM === 'PM'){
+  if (hour >= 12 || hour < 6){
+    partOfDay = "this afternoon!"
+  }
+  else {
+    partOfDay = "tonight!"
+  }
+}
+
+
+// console.log('period is ' , period)
+console.log('part of day is ' , partOfDay)
+
   
   //set states with data
-  setCurrWeather(data.currWeather)
-  setLocation(data.location)
-  setCondition(data.condition)
+  setCurrWeather(data.current.temp_f);
+  setLocation(data.location.name);
+  setCondition(data.current.condition.text);
   setOnOpen(false)
 
-  const currWeatherNumber = parseFloat(data.currWeather);
+  const currWeatherNumber = parseFloat(data.current.temp_f);
 
     if(currWeatherNumber <= 32){
       setWeatherColor('lightblue')
-      setWeatherText('\'oooo Chilly!\'')
+      setWeatherText(`\'oooo Chilly ${partOfDay}\'`)
     }
     else if(currWeatherNumber <= 59){
       setWeatherColor('blue')
-      setWeatherText('\'A bit cold out!\'')
+      setWeatherText(`\'A bit cold out ${partOfDay}\'`)
     }
     else if(currWeatherNumber <= 79){
       setWeatherColor('yellow')
-      setWeatherText('\'What a nice day!\'')
+      setWeatherText(`\'Wow, its nice ${partOfDay}\'`)//dynamically change the word day text based on time, change the word day to morning, afternoon or night
     }
     else if(currWeatherNumber <= 90){
       setWeatherColor('orange')
-      setWeatherText('\'Wow, its hot today!\'')
+      setWeatherText(`\'Wow, its hot ${partOfDay}\'`)//dynamically change the word today to this morning, this afternoon, or tonight
     }
     else if(currWeatherNumber <= 130){
       setWeatherColor('red')
-      setWeatherText('\'Today is a scortcher!\'')
+      setWeatherText(`\'It\'s a scortcher ${partOfDay}\'`)//dynamically change the word today to This morning, This afternoon, or Tonight
     }
     
 
@@ -165,6 +222,53 @@ const handleWeatherSearch = async () => {
     setCanSetWeather(true)//make a piece of state turn true here, to able the set weather button
     console.log(data)
 
+    let dateAndTime = data.location.localtime;
+
+  let timeOnly = dateAndTime.split(" ")[1];
+  let twelveHourTime = convertTo12HourFormat(timeOnly)
+  console.log('time is ', twelveHourTime)
+
+  let AM;
+  let PM;
+
+    if (twelveHourTime.includes('AM')) {
+      AM = 'AM';
+    } else {
+    PM = 'PM';
+    }
+
+// Now you can use the AM and PM variables elsewhere in your code
+
+
+  // Determine the part of the day based on twelveHourTime
+  const hour = parseInt(twelveHourTime.split(":")[0]);
+  console.log('hour is ' , hour)
+
+  //check if AM is populated, else assume PM is populated and check using 12 hour clock
+
+let partOfDay;
+//if am exists
+if(AM === 'AM'){
+  //if the hour is over 5 or under 12, its morning
+  if (hour >= 5 && hour < 12) {
+    partOfDay = "this morning!";
+  }
+}
+//if PM exists
+if(PM === 'PM'){
+  if (hour >= 12 || hour < 6){
+    partOfDay = "this afternoon!"
+  }
+  else {
+    partOfDay = "tonight!"
+  }
+}
+
+
+// console.log('period is ' , period)
+console.log('part of day is ' , partOfDay)
+
+
     //handle response and populate component with weather data
   
     setCurrWeather(data.current.temp_f);
@@ -175,23 +279,23 @@ const handleWeatherSearch = async () => {
 
     if(currWeatherNumber <= 32){
       setWeatherColor('lightblue')
-      setWeatherText('\'oooo Chilly!\'')
+      setWeatherText(`\'oooo Chilly ${partOfDay}\'`)
     }
     else if(currWeatherNumber <= 59){
       setWeatherColor('blue')
-      setWeatherText('\'A bit cold out!\'')
+      setWeatherText(`\'A bit cold out ${partOfDay}\'`)
     }
     else if(currWeatherNumber <= 79){
       setWeatherColor('yellow')
-      setWeatherText('\'What a nice day!\'')
+      setWeatherText(`\'Wow, its nice ${partOfDay}\'`)//dynamically change the word day text based on time, change the word day to morning, afternoon or night
     }
     else if(currWeatherNumber <= 90){
       setWeatherColor('orange')
-      setWeatherText('\'Wow, its hot today!\'')
+      setWeatherText(`\'Wow, its hot ${partOfDay}\'`)//dynamically change the word today to this morning, this afternoon, or tonight
     }
     else if(currWeatherNumber <= 130){
       setWeatherColor('red')
-      setWeatherText('\'Today is a scortcher!\'')
+      setWeatherText(`\'It\'s a scortcher ${partOfDay}\'`)//dynamically change the word today to This morning, This afternoon, or Tonight
     }
     
 

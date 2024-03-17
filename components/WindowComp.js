@@ -39,6 +39,7 @@ import windowsFlag from '../public/windowsFlag.gif';
 import dancingSims from '../public/dancingSims.gif'
 import n64 from '../public/n64.gif';
 import pixelMac from '../public/pixelMac.gif';
+import openComputer from '../public/openComputer.gif';
 
 
 
@@ -104,7 +105,8 @@ export default function WindowComp({isTunesOpen}) {
     '/Donkey Kong Country - Ice Cave Chant [Restored].mp3',
     '/Super Mario 64 Remastered - File Select.mp3',
     '/Super Mario 64 Remastered - Inside the Castle Walls.mp3',
-    '/Super Mario 64 Remastered - Dire, Dire Docks.mp3'
+    '/Super Mario 64 Remastered - Dire, Dire Docks.mp3',
+    '/Gran Turismo 5 OST_ Kemmei Adachi - Evening Haze.mp3'
 
 
 
@@ -130,7 +132,8 @@ export default function WindowComp({isTunesOpen}) {
     windowsFlag,
     dancingSims, 
     n64,
-    pixelMac
+    pixelMac,
+    openComputer,
   ];
 
   const { username } = useAuth();
