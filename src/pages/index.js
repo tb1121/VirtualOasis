@@ -13,8 +13,6 @@ const BGs = ['/OasisBG.gif', '/gridBG.gif'];
 
 const HomePage = ({ handleThemeChange, theme }) => {
   const { isLoggedIn } = useAuth();
-  const [isAudioPlaying, setAudioPlaying] = useState(false);
-  const [backgroundIndex, setBackgroundIndex] = useState(0);
 
   const handleVirtualOasisClick = () => {
     const audio = new Audio('/AudioOasis.mp3');

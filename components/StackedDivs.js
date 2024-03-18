@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '@react95/icons/icons.css';
 import { useAuth } from './AuthContext';
 import WindowComp from './WindowComp';
@@ -15,19 +15,22 @@ const StackedDivs = ({ theme }) => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isInternetOpen, setIsInternetOpen] = useState(false);
   const [isWeatherOpen, setIsWeatherOpen] = useState(false);
-  const [onOpen, setOnOpen] = useState(true);
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      setIsTunesOpen(false);
-    }
-  }, [isLoggedIn]);
+  const {setStopMusic, stopMusic} =  useAuth();
 
   const toggleTunes = () => {
-    if (isLoggedIn){
-    setIsTunesOpen(prevState => !prevState);
+    if (isLoggedIn) {
+      if (isTunesOpen) {
+        setStopMusic(true); // Stop the music if it's currently playing
+        setTimeout(() => {
+          setIsTunesOpen(false); // Close the window after a delay
+        }, 100);
+      } else {
+        setStopMusic(false); // Start the music if it's not playing
+        setIsTunesOpen(true); // Open the window
+      }
     }
   };
+  
 
   const toggleNotes = async () => {
     if (isLoggedIn) {
@@ -74,11 +77,6 @@ const StackedDivs = ({ theme }) => {
     console.log('Div 5 clicked!');
   };
 
-  setTimeout(() => {
-    setOnOpen(false)
-  }
-  ,4000)
-
   const divsContent = [
     {
       iconClass: 'CdMusic_32x32_4',
@@ -110,7 +108,7 @@ const StackedDivs = ({ theme }) => {
 //set class to ternary, empty if onOpen is false, and animated if onOpen is true.
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '6vw 2vw 0vw 1vw' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '70px 2vw 0vw 1vw' }}>
         {divsContent.map((content, index) => (
           <div key={index} className={`animate__animated animate__zoomIn animate__delay-${index + 1}s`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span
@@ -124,11 +122,11 @@ const StackedDivs = ({ theme }) => {
           </div>
         ))}
       </div>
-      <div style={{rowGap: '2vw', flexWrap: 'wrap', minWidth: '85vw', minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', margin: '6vw .5vw 0vw .5vw' }}>
-        {isTunesOpen && <WindowComp isTunesOpen={isTunesOpen} setIsTunesOpen={setIsTunesOpen} onClose={() => setIsTunesOpen(false)} />}
-        {isInternetOpen && <Internet onClose={() => setIsInternetOpen(false)} />}
-        {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} onClose={() => setIsNotesOpen(false)} />}
-        {isWeatherOpen && <Weather onClose={() => setIsWeatherOpen(false)} />}
+      <div style={{rowGap: '2vw', flexWrap: 'wrap', minWidth: '85vw', minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', margin: '65px .5vw 0vw .5vw' }}>
+        {isTunesOpen && <WindowComp />}
+        {isInternetOpen && <Internet />}
+        {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} />}
+        {isWeatherOpen && <Weather style={{ marginBottom: '20px' }}/>}
       </div>
     </div>
   );

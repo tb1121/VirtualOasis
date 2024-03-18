@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const User = require('../models/User');
+require('dotenv').config();
 
-const apiKey = 'ec04f3327f67475fbe863228240703';
+
+const apiKey = process.env.WEATHER_API_KEY;
 
 router.post('/getWeather', async (req, res) => {
   const { searchQuery, username } = req.body;

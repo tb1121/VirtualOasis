@@ -45,7 +45,7 @@ import openComputer from '../public/openComputer.gif';
 
 import { useAuth } from './AuthContext';
 
-export default function WindowComp({isTunesOpen}) {
+export default function WindowComp() {
   const [musicOpen, setMusicOpen] = useState(false);
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [heartClicked, setheartClicked] = useState(false);
@@ -65,7 +65,8 @@ export default function WindowComp({isTunesOpen}) {
   const [favoritedSongs, setFavoritedSongs] = useState([]);
   const [songWasDeleted, setSongWasDeleted] = useState(false);
   const [usersFavoriteSong, setUsersFavoriteSong] = useState('');
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, stopMusic } = useAuth();
+
 
   const songsArr = [
     '/FLOURISHMID.mp3',
@@ -141,11 +142,15 @@ export default function WindowComp({isTunesOpen}) {
 
 
     useEffect(() => {
-    // Reset heartClicked to false when changing to a new song
+      console.log('from useeffect, stopMusic state is ', stopMusic)
+    // Reset heartClicked to false when changing to a new song]
+    if(stopMusic && audioRef.current){
+      audioRef.current.pause();
+    }
     if(!shufflingFavorites){
     setheartClicked(false);
     }
-  }, [currentSongIndex]);
+  }, [currentSongIndex, stopMusic]);
 
   //new request if im shuffling favorites
   const removeFavoriteSong = async () => {

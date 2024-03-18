@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+require('dotenv').config();
 
 router.post('/getResults', async (req, res) => {
   const { searchQuery } = req.body;
-  const apiKey = 'AIzaSyDWoqxwYsBz9P1YCNqcNLDfaW3yaCeP5lI'; // Replace with your actual Google API key
+  const apiKey = process.env.GOOGLE_SEARCH_API_KEY;; // Replace with your actual Google API key
 
   try {
     const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
