@@ -138,6 +138,9 @@ if(AM === 'AM'){
   if (hour >= 5 && hour < 12) {
     partOfDay = "this morning!";
   }
+  else {
+    partOfDay = "tonight!";
+  }
 }
 //if PM exists
 if(PM === 'PM'){
@@ -246,23 +249,26 @@ const handleWeatherSearch = async () => {
 
   //check if AM is populated, else assume PM is populated and check using 12 hour clock
 
-let partOfDay;
-//if am exists
-if(AM === 'AM'){
-  //if the hour is over 5 or under 12, its morning
-  if (hour >= 5 && hour < 12) {
-    partOfDay = "this morning!";
+  let partOfDay;
+  //if am exists
+  if(AM === 'AM'){
+    //if the hour is over 5 or under 12, its morning
+    if (hour >= 5 && hour < 12) {
+      partOfDay = "this morning!";
+    }
+    else {
+      partOfDay = "tonight!";
+    }
   }
-}
-//if PM exists
-if(PM === 'PM'){
-  if (hour >= 12 || hour < 6){
-    partOfDay = "this afternoon!"
+  //if PM exists
+  if(PM === 'PM'){
+    if (hour >= 12 || hour < 6){
+      partOfDay = "this afternoon!"
+    }
+    else {
+      partOfDay = "tonight!"
+    }
   }
-  else {
-    partOfDay = "tonight!"
-  }
-}
 
 
 // console.log('period is ' , period)

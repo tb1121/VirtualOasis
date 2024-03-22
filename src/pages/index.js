@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../components/AuthContext';
 import StackedDivs from '../../components/StackedDivs';
@@ -10,9 +10,19 @@ import 'animate.css';
 
 const water = ['/water.gif'];
 const BGs = ['/OasisBG.gif', '/gridBG.gif'];
+const startupSound = '/startup.mp3'
 
 const HomePage = ({ handleThemeChange, theme }) => {
   const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const audio = new Audio(startupSound);
+      audio.volume = 0.1;
+      audio.play();
+    }
+  }, [isLoggedIn]);
+  
 
   const handleVirtualOasisClick = () => {
     const audio = new Audio('/AudioOasis.mp3');

@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     setStopMusic(true);
     setTimeout(() => {
       setLogin(false);
-    },1000)
+    },200)
     setUsername(''); // Reset the username when logging out
   };
 

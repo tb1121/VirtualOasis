@@ -2,10 +2,15 @@ const express = require('express');
 const app = express();
 const port = 3001;
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
-app.use(cors());
-
+app.use(cors({
+  origin: 'http://localhost:3000', // Replace with your frontend URL
+  credentials: true // Allow cookies to be sent
+}));
+app.use(cookieParser());
 app.use(express.json());
+
 const loginRouter = require('./routes/login');
 const signupRouter = require('./routes/signup');
 const saveNotesRouter = require('./routes/saveNotes');

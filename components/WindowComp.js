@@ -40,6 +40,8 @@ import dancingSims from '../public/dancingSims.gif'
 import n64 from '../public/n64.gif';
 import pixelMac from '../public/pixelMac.gif';
 import openComputer from '../public/openComputer.gif';
+import contra from '../public/contra.gif';
+import animatedColors from '../public/animatedColors.gif';
 
 
 
@@ -107,7 +109,17 @@ export default function WindowComp() {
     '/Super Mario 64 Remastered - File Select.mp3',
     '/Super Mario 64 Remastered - Inside the Castle Walls.mp3',
     '/Super Mario 64 Remastered - Dire, Dire Docks.mp3',
-    '/Gran Turismo 5 OST_ Kemmei Adachi - Evening Haze.mp3'
+    '/Gran Turismo 5 OST_ Kemmei Adachi - Evening Haze.mp3',
+    '/Gran Turismo 5 OST_ Daisuke Kawai - Weekend.mp3',
+    '/Garage - Gran Turismo 6.mp3',
+    '/Gran Turismo 5 OST_ Satoshi Bando - Wave Train.mp3',
+    '/Gran Turismo 5 OST_ Satoshi Bando - Smooth Talking.mp3',
+    '/Sega Marine Fishing - The Offing.mp3',
+    '/Winning Results - Mario Kart 64 (Restored).mp3',
+    '/Nagano Winter Olympics 98 Music Won 3.mp3',
+    '/Lost - 1080 Snowboarding.mp3',
+    '/Metroid - Ending (Analog Synth Remake).mp3',
+
 
 
 
@@ -135,14 +147,36 @@ export default function WindowComp() {
     n64,
     pixelMac,
     openComputer,
+    contra,
+    animatedColors,
   ];
 
   const { username } = useAuth();
   const { globalZIndex, incrementZIndex } = useZIndex();
 
 
+  useEffect(() => {
+    // Check if audio is playing and fetch updated favorite songs
+    if (isAudioPlaying || currentSongIndex !== null) {
+      // Make the request to the backend to fetch updated favorite songs
+      handleUpdateGrabAllFavoriteSongs().then(() => {
+        // Check if the current song is in the updated favorite songs array
+        const currentSongName = songsArr[currentSongIndex];
+        if (UpdatedFavSongsArray.includes(currentSongName)) {
+          setheartClicked(true);
+        } else {
+          setheartClicked(false);
+        }
+      }).catch(error => {
+        console.error('Error fetching updated favorite songs:', error);
+      });
+    }
+  }, [isAudioPlaying, currentSongIndex]);
+  
+
+
     useEffect(() => {
-      console.log('from useeffect, stopMusic state is ', stopMusic)
+      // console.log('from useeffect, stopMusic state is ', stopMusic)
     // Reset heartClicked to false when changing to a new song]
     if(stopMusic && audioRef.current){
       audioRef.current.pause();
@@ -360,8 +394,8 @@ export default function WindowComp() {
       if (response.ok) {
         const data = await response.json();
         // Handle the data retrieved from the server
-        console.log(data.songs);
         setUpdatedFavSongsArray(data.songs)
+        console.log(UpdatedFavSongsArray)
       } else {
         throw new Error(`Failed to grab favorite songs. Status: ${response.status}`);
       }
@@ -398,8 +432,8 @@ export default function WindowComp() {
       if (response.ok) {
         const data = await response.json();
         // Handle the data retrieved from the server
-        console.log(data.songs);
-        setUpdatedFavSongsArray(data.songs)
+        // console.log(data.songs);
+        // setUpdatedFavSongsArray(data.songs) include this line in the new call to the backend api, when I first load the component
       } else {
         throw new Error(`Failed to grab favorite songs. Status: ${response.status}`);
       }
@@ -483,7 +517,7 @@ export default function WindowComp() {
   
 
   const handleMouseDown = () => {
-    console.log('mouse down! from WindowComp' + globalZIndex)
+    // console.log('mouse down! from WindowComp' + globalZIndex)
     incrementZIndex()
     setLocalZIndex(globalZIndex + 1)
   }
@@ -641,11 +675,31 @@ export default function WindowComp() {
           </WindowHeader>
 
           <Toolbar noPadding>
-            <Button onClick={(handleGrabAllFavoriteSongs)}//make dropdown appear here after this button is clicked!
-           
+          <Button
+            onClick={handleGrabAllFavoriteSongs}
             variant="thin"
-            active={favoritesOpen}>Favorites
-            </Button>
+            active={favoritesOpen}
+          >
+            <span
+              style={{
+                animation: shufflingFavorites
+                  ? 'highlight 1s linear infinite alternate'
+                  : 'none', // Apply animation only when shufflingFavorites is true
+              }}
+            >
+              Favorites
+            </span>
+            <style jsx>{`
+              @keyframes highlight {
+                from {
+                  color: black; /* Start color */
+                }
+                to {
+                  color: red; /* End color */
+                }
+              }
+            `}</style>
+          </Button>
             {favoritesOpen && (
               <MenuList
               style={{
