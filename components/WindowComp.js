@@ -156,6 +156,7 @@ export default function WindowComp() {
 
 
   useEffect(() => {
+    console.log(UpdatedFavSongsArray)
     // Check if audio is playing and fetch updated favorite songs
     if (isAudioPlaying || currentSongIndex !== null) {
       // Make the request to the backend to fetch updated favorite songs
@@ -395,7 +396,6 @@ export default function WindowComp() {
         const data = await response.json();
         // Handle the data retrieved from the server
         setUpdatedFavSongsArray(data.songs)
-        console.log(UpdatedFavSongsArray)
       } else {
         throw new Error(`Failed to grab favorite songs. Status: ${response.status}`);
       }

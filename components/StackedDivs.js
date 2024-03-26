@@ -4,7 +4,8 @@ import { useAuth } from './AuthContext';
 import WindowComp from './WindowComp';
 import Notes from './Notes';
 import Internet from './Internet';
-import Weather from './Weather'
+import Weather from './Weather';
+import Calendar from './Calendar';
 import 'animate.css';
 
 
@@ -15,6 +16,7 @@ const StackedDivs = ({ theme }) => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isInternetOpen, setIsInternetOpen] = useState(false);
   const [isWeatherOpen, setIsWeatherOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const {setStopMusic, stopMusic} =  useAuth();
 
   const toggleTunes = () => {
@@ -73,8 +75,10 @@ const StackedDivs = ({ theme }) => {
     }
   };
 
-  const handleDiv5Click = () => {
-    console.log('Div 5 clicked!');
+  const toggleCalendar = () => {
+    if (isLoggedIn){
+    setIsCalendarOpen(prevState => !prevState);
+    }
   };
 
   const divsContent = [
@@ -99,9 +103,9 @@ const StackedDivs = ({ theme }) => {
       onClick: toggleWeather,
     },
     {
-      iconClass: 'YourNextIconClass',
-      text: '',
-      onClick: handleDiv5Click,
+      iconClass: 'Timedate_32x32_4',
+      text: 'Calendar.exe',
+      onClick: toggleCalendar,
     },
   ];
 //import animation
@@ -122,11 +126,13 @@ const StackedDivs = ({ theme }) => {
           </div>
         ))}
       </div>
-      <div style={{rowGap: '2vw', flexWrap: 'wrap', minWidth: '85vw', minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', margin: '65px .5vw 0vw .5vw' }}>
+      <div style={{rowGap: '2vw', flexWrap: 'wrap', minWidth: '85vw', minHeight: '100%', display: 'flex', justifyContent: 'space-between', flexDirection: 'row', margin: '65px .5vw 2vw .5vw' }}>
         {isTunesOpen && <WindowComp />}
         {isInternetOpen && <Internet />}
         {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} />}
         {isWeatherOpen && <Weather style={{ marginBottom: '20px' }}/>}
+        {isCalendarOpen && <Calendar />}
+
       </div>
     </div>
   );

@@ -8,6 +8,7 @@ export default function Internet() {
   const [searchQuery, setSearchQuery] = useState('');
   const [localZIndex, setLocalZIndex] = useState(3);
   const [searchResults, setSearchResults] = useState([]);
+  const [noResults, setNoResults] = useState(false)
   const [clicked, setClicked] = useState(false);
   const { globalZIndex, incrementZIndex } = useZIndex();
 
@@ -29,7 +30,14 @@ export default function Internet() {
 
       const data = await response.json();
 
+      if(data.items){
       setSearchResults(data.items);
+      setNoResults(false)
+      }
+      else{
+        setNoResults(true);
+        setSearchResults([])
+      }
     } catch (error) {
       console.error('Error during search:', error);
     }finally {
@@ -66,6 +74,7 @@ export default function Internet() {
                 <span style={{ color: '#0F9D58' }}>e</span>
               </div>
               <TextInput
+                placeholder='Just Google it'
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -98,6 +107,13 @@ export default function Internet() {
                   </ul>
                 </div>
               </ScrollView>
+            )}
+            {noResults && (
+            <ScrollView>
+              <div>
+                Sorry your search returned no results. 
+              </div>
+            </ScrollView>
             )}
           </WindowContent>
         </Window>
