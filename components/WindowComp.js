@@ -584,6 +584,8 @@ export default function WindowComp() {
     }
   };
 
+
+
   const handlePauseClick = () => {
     const audio = audioRef.current;
 
@@ -761,7 +763,7 @@ export default function WindowComp() {
                   }}
                   onClick={() => setMusicOpen(false)}
                 >
-                  <MenuListItem onClick={handlePlayClick} size="sm">
+                  <MenuListItem onClickCapture={handlePlayClick} size="sm">
                     Play
                   </MenuListItem>
                   <MenuListItem onClick={handleShuffleClick} size="sm">

@@ -7,6 +7,18 @@ const weatherSchema = new mongoose.Schema({
   },
 });
 
+const scheduleSchema = new mongoose.Schema({
+  eventName: {
+      type: String,
+      required: true,
+  },
+  dateTime: {
+      type: Date, // Use Date type for time
+      required: true,
+  },
+})
+ 
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -29,6 +41,7 @@ const userSchema = new mongoose.Schema({
     },
   ],
   weatherInfo: [weatherSchema],
+  scheduleInfo: [scheduleSchema],
 });
 
 const User = mongoose.model('User', userSchema);
