@@ -23,7 +23,7 @@ import CD from '../public/spinningCD.gif';
 import playGif from '../public/playGif.gif';
 import DavidWave from '../public/DavidWave.gif';
 import cubeSpin from '../public/cubeSpin.gif';
-import spinningwindow from '../public/spinningwindow.gif';
+import spinningwindow from '../public/spinningWindow.gif';
 import pixelStatue from '../public/pixelStatue.gif';
 import Grid from '../public/3dgrid.gif';
 import mikeTyson from '../public/mikeTyson.gif';

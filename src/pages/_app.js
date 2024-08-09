@@ -5,6 +5,8 @@ import { ThemeProvider } from 'styled-components';
 import { AuthProvider } from '../../components/AuthContext';
 import { ZIndexProvider } from '../../components/ZIndexContext';
 
+
+
 import GlobalStyles from '../styles/GlobalStyles';
 import { original } from 'react95/dist/themes';
 // import matrix from 'react95/dist/themes/matrix';
