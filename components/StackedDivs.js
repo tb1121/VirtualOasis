@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-// import '@react95/icons/icons.css';
+import '@react95/icons/icons.css';
 import { useAuth } from './AuthContext';
 import WindowComp from './WindowComp';
 import Notes from './Notes';
 import Internet from './Internet';
 import Weather from './Weather';
 import Calendar from './Calendar';
+import Calculator from './Calculator';
 import 'animate.css';
 
 
@@ -17,6 +18,8 @@ const StackedDivs = ({ theme }) => {
   const [isInternetOpen, setIsInternetOpen] = useState(false);
   const [isWeatherOpen, setIsWeatherOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+
   const {setStopMusic, stopMusic} =  useAuth();
 
   const toggleTunes = () => {
@@ -81,6 +84,12 @@ const StackedDivs = ({ theme }) => {
     }
   };
 
+  const toggleCalculator = () => {
+    if (isLoggedIn){
+    setIsCalculatorOpen(prevState => !prevState);
+    }
+  };
+
   const divsContent = [
     {
       iconClass: 'CdMusic_32x32_4',
@@ -107,6 +116,11 @@ const StackedDivs = ({ theme }) => {
       text: 'Calendar.exe',
       onClick: toggleCalendar,
     },
+    {
+      iconClass: 'Calculator_32x32_4',
+      text: 'Calculator.exe',
+      onClick: toggleCalculator,
+    }
   ];
 //import animation
 //set class to ternary, empty if onOpen is false, and animated if onOpen is true.
@@ -114,7 +128,7 @@ const StackedDivs = ({ theme }) => {
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '70px 2vw 0vw 1vw' }}>
         {divsContent.map((content, index) => (
-          <div key={index} className={`animate__animated animate__zoomIn animate__delay-${index + 1}s`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div key={index} className={`animate__animated animate__zoomIn animate__delay-${index}s`} style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span
               className={content.iconClass}
               onClick={content.onClick}
@@ -132,6 +146,7 @@ const StackedDivs = ({ theme }) => {
         {isNotesOpen && <Notes setNotesData={setNotesData} notesData={notesData} />}
         {isWeatherOpen && <Weather style={{ marginBottom: '20px' }}/>}
         {isCalendarOpen && <Calendar />}
+        {isCalculatorOpen && <Calculator />}
 
       </div>
     </div>
