@@ -1,6 +1,5 @@
-// next.config.mjs
-export default {
-  reactStrictMode: true,
+const mod =  {
+  reactStrictMode: false,
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(woff2)$/,
@@ -12,3 +11,5 @@ export default {
     return config;
   },
 };
+
+export default mod

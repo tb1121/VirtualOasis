@@ -1,70 +1,97 @@
-import React, { useState, useEffect } from 'react';
-import Draggable from 'react-draggable';
-import { ScrollView, Select, NumberInput, Window, WindowContent, WindowHeader, Button, GroupBox, TextInput } from 'react95';
+import React, { useState } from 'react';
+import { Window, Button, WindowHeader, WindowContent, ScrollView } from 'react95';
 import { useZIndex } from './ZIndexContext';
+import { evaluate } from 'mathjs';
+import Draggable from 'react-draggable';
 import 'animate.css';
-import { useAuth } from '../components/AuthContext';
-
 
 export default function Calculator() {
-
+  // 1. Initialize State Variables
   const [localZIndex, setLocalZIndex] = useState(3);
   const { globalZIndex, incrementZIndex } = useZIndex();
-  const [numbersButtons, setNumbersButtons] = useState([])
-  const [operation, setOperation] = useState('')
+  const [operation, setOperation] = useState(''); // Stores the operation
+  const [result, setResult] = useState(''); // Stores the result
+  const [hasEvaluated, setHasEvaluated] = useState(false); // Tracks if the result was just calculated
+  const [backlightOn, setBacklightOn] = useState(false)
 
-  const populateButtons = () => {
-    const buttons = []
-  for(let i = 0; i < 10; i ++){
-    buttons.push(<Button onClick={() => addToOperation(i.toString())}  style={{height:'50px', width:'50px'}}>{i}</Button>)
-  }
-  setNumbersButtons(buttons)
-}
+  // 2. Function to Clear Operation and Result (All Clear)
+  const clearAll = () => {
+    setOperation('');
+    setResult('');
+    setHasEvaluated(false);
+  };
 
-const rows = [
-  numbersButtons.slice(7, 10),
-  numbersButtons.slice(4, 7),
-  numbersButtons.slice(1, 4),
-  numbersButtons.slice(0, 1),
-];
+  // 3. Function to Append Values to Operation
+  const addToOp = (value) => {
+    if (hasEvaluated) {
+      // If result was just evaluated, start a new operation with the result as the base
+      setOperation(result + value);
+      setHasEvaluated(false);
+    } else {
+      setOperation((prev) => prev + value);
+    }
+  };
 
-useEffect(() => {
-  populateButtons();
-}, []);
+  // 4. Generate Number Buttons
+  const numberButtons = (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 50px)'}}>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('7')}>7</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('8')}>8</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('9')}>9</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('4')}>4</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('5')}>5</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('6')}>6</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('1')}>1</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('2')}>2</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('3')}>3</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('0')}>0</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('.')}>.</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={clearAll}>AC</Button>
+      <Button style={{ width: '150px', height: '50px' }} onClick={() => setBacklightOn(prev => !prev)}>Backlight</Button>
+    </div>
+  );
+
+  // 5. Add Operator Buttons
+  const operatorButtons = (
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('+')}>+</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('-')}>-</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('*')}>x</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => addToOp('/')}>/</Button>
+      <Button style={{ width: '50px', height: '50px' }} onClick={() => {
+        setResult(evaluate(operation));
+        setHasEvaluated(true);
+      }}>=</Button>
+    </div>
+  );
 
   const handleMouseDown = () => {
     incrementZIndex();
     setLocalZIndex(globalZIndex + 1);
   };
 
-  const addToOperation = (value) => {
-    setOperation(prev => prev + value)
-  }
-    
+  // 8. Render the Calculator UI
   return (
-    
     <Draggable onMouseDown={handleMouseDown} handle=".window-header">
-    <div style={{ zIndex: localZIndex, padding: '0', top: '0', right: '0' }}>
-    <Window style={{ width: '190px', minWidth: '130px' }}>
-    <WindowHeader className="window-header">
+      <div style={{ zIndex: localZIndex, padding: '0', top: '0', right: '0' }}>
+        <Window style={{ width: '200px', minWidth: '250px' }}>
+          <WindowHeader className="window-header">
             <span className="Calculator_16x16_4"></span>
-            {' '}
-            Calculator.exe
-    </WindowHeader>
-    <TextInput value={operation} readOnly>
-      
-    </TextInput>
-    <div style={{ padding: '10px' }}>
-            {rows.map((row, index) => (
-              <div key={index} style={{ display: 'flex', justifyContent: 'center', marginBottom: '2px' }}>
-                {row}
-              </div>
-            ))}
-          </div>
-
-    </Window>
-    </div>
+            {' '}Calculator.exe
+          </WindowHeader>
+          <WindowContent>
+            <ScrollView style={{background: backlightOn? 'cyan': 'darkgray', marginBottom:'5px'}} >
+              {'Result: ' + result}
+              <br></br>
+              {'Operation: ' + operation}
+            </ScrollView>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div>{numberButtons}</div>
+              <div>{operatorButtons}</div>
+            </div>
+          </WindowContent>
+        </Window>
+      </div>
     </Draggable>
-   
-  )
+  );
 }
