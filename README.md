@@ -1,4 +1,6 @@
 # Welcome to the Virtual Oasis!
+![Homepage](/Readmefiles/Screenshot 2024-08-21 at 2.41.30 PM.png)
+
 
 ## About
 
