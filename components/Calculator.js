@@ -80,7 +80,7 @@ export default function Calculator() {
             {' '}Calculator.exe
           </WindowHeader>
           <WindowContent>
-            <ScrollView style={{background: backlightOn? 'cyan': 'darkgray', marginBottom:'5px'}} >
+            <ScrollView style={{textShadow: '3px 3px 3px gray', background: backlightOn? 'cyan': 'darkgray', marginBottom:'5px'}} >
               {'Result: ' + result}
               <br></br>
               {'Operation: ' + operation}
