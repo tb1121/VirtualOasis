@@ -1,10 +1,16 @@
 # Welcome to the Virtual Oasis!
-![Homepage](/Readmefiles/Screenshot 2024-08-21 at 2.41.30 PM.png)
+![Homepage](/Readmefiles/homepage.png)
 
 
 ## About
 
-Welcome to the Virtual Oasis! This is a responsive and beautifully designed desktop application built with Next.js and Express.js. It features 6 native mini-apps, including:
+Have you ever wanted to travel back to the 90s and relax with some laid-back tunes and simplistic but snappy apps? Relive the glory days of 90s computing and kick back in the Virtual Oasis. The Virtual Oasis was designed to emulate Windows 95 in a clean and fun way so you can feel good, while looking good too.
+
+Enjoy some music in the Tunes app while you search Google, plan your next events in the Calendar app, and perform calculations on a retro calculator with a backlight! Take notes in your next meeting and save them with just a click in the notes app!
+
+Everything here was built natively(all by yours truly) so that you can have a curated platform to indulge in. Your Theme/color Scheme can be changed with the click of a button. Customize your Oasis!
+
+This is a responsive and beautifully designed desktop application built with Next.js and Express.js. It features 6 native mini-apps, including:
 
 - **Music App**
 - **Notes App**
