@@ -30,6 +30,8 @@ This is a responsive and beautifully designed desktop application built with Nex
 
 ## Screenshots
 
+![Homepage](/Readmefiles/apps_open.png)
+
 ### Music App
 ![Music App](URL_to_Music_App_Screenshot)
 
