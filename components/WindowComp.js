@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Draggable from 'react-draggable';
+import '@react95/icons/icons.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as soildHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart } from '@fortawesome/free-regular-svg-icons';
@@ -17,7 +18,6 @@ import {
   Button,
   Tooltip,
 } from 'react95';
-import '@react95/icons/icons.css';
 import Image from 'next/image';
 import CD from '../public/spinningCD.gif';
 import playGif from '../public/playGif.gif';
@@ -689,7 +689,7 @@ export default function WindowComp() {
                   : 'none', // Apply animation only when shufflingFavorites is true
               }}
             >
-              Favorites
+              <span style={{ textDecoration: 'underline' }}>F</span>avorites
             </span>
             <style jsx>{`
               @keyframes highlight {
@@ -712,13 +712,13 @@ export default function WindowComp() {
               }}
               >
                 <MenuListItem onClick={handleShuffleAllFavoriteSongs}>
-                  Shuffle
+                <p><span style={{ textDecoration: 'underline' }}>S</span><span>huffle</span></p>
                 </MenuListItem>
               </MenuList>
             )}
 
             <Button variant="thin" onClick={handleSaveClick}>
-              Save
+            <span style={{ textDecoration: 'underline' }}>S</span>ave
             </Button>
             <div
               style={{
@@ -732,7 +732,7 @@ export default function WindowComp() {
                 onClick={() => setMusicOpen(!musicOpen)}
                 active={musicOpen}
               >
-                Music
+              <span style={{ textDecoration: 'underline' }}>M</span>usic
               </Button>
               {/* Show heart when music is playing */}
               {isAudioPlaying && (
@@ -764,22 +764,22 @@ export default function WindowComp() {
                   onClick={() => setMusicOpen(false)}
                 >
                   <MenuListItem onClickCapture={handlePlayClick} size="sm">
-                    Play
+                  <p><span style={{ textDecoration: 'underline' }}>P</span><span>lay</span></p>
                   </MenuListItem>
                   <MenuListItem onClick={handleShuffleClick} size="sm">
-                    Shuffle
+                  <p><span style={{ textDecoration: 'underline' }}>S</span><span>huffle</span></p>
                   </MenuListItem>
                   <MenuListItem onClick={handleNextClick} size="sm">
-                    Next
+                  <p><span style={{ textDecoration: 'underline' }}>N</span><span>ext</span></p>
                   </MenuListItem>
                   <MenuListItem onClick={handlePreviousClick} size="sm">
-                    Previous
+                  <p><span style={{ textDecoration: 'underline' }}>P</span><span>revious</span></p>
                   </MenuListItem>
                   <MenuListItem onClick={handlePauseClick} size="sm">
-                    Pause
+                  <p><span style={{ textDecoration: 'underline' }}>P</span><span>ause</span></p>
                   </MenuListItem>
                   <MenuListItem onClick={handleResumeClick} size="sm">
-                    Resume
+                  <p><span style={{ textDecoration: 'underline' }}>R</span><span>esume</span></p>
                   </MenuListItem>
                 </MenuList>
               )}

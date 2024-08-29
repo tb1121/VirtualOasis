@@ -1,5 +1,5 @@
+import '@react95/icons/icons.css';
 import React, { useState } from 'react';
-// import '@react95/icons/icons.css';
 import { useAuth } from './AuthContext';
 import WindowComp from './WindowComp';
 import Notes from './Notes';
