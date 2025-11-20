@@ -26,7 +26,7 @@ export default function Login() {
   const handleData = async () => {
     setShaking(false);
     // Set response to make a request to the backend, sending username and password in req.body
-    const response = await fetch('http://localhost:3001/api/login', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

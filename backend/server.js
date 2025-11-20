@@ -1,11 +1,14 @@
 const express = require('express');
+require('dotenv').config();
 const app = express();
 const port = 3001;
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your frontend URL
+  origin: ['http://localhost:3000',
+  'https://virtual-oasis-frontend.fly.dev'
+  ],
   credentials: true // Allow cookies to be sent
 }));
 app.use(cookieParser());
@@ -19,10 +22,11 @@ const searchInternet = require('./routes/searchInternet');
 const findWeather = require('./routes/findWeather');
 const deleteSongs = require('./routes/deleteSongs');
 const scheduleEvent = require('./routes/scheduleEvent');
+const MONGO_URI = process.env.MONGO_URI;
 
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://Taylor:PNJ009ylWsBLcTIi@assessment.i6oru1a.mongodb.net/', {
+mongoose.connect(MONGO_URI, {
 });
 
 // Handle MongoDB connection events
@@ -42,8 +46,9 @@ app.use('/api/findWeather', findWeather);
 app.use('/api/deleteSongs', deleteSongs);
 app.use('/api/scheduleEvent', scheduleEvent);
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server is running on port ${port}`);
 });
+
 
 //route to favorite song is /api/favoriteSong/sendFavoriteSong

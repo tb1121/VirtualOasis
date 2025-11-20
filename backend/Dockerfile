@@ -1,17 +1,20 @@
-# Backend Dockerfile (Express)
+# Use the official Node.js image
 FROM node:22.2.0
 
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy ONLY backend package.json
-COPY backend/backend-package.json ./package.json
+# Copy backend package.json
+COPY backend-package.json package.json
 
-# Install backend dependencies
+# Install dependencies
 RUN npm install
 
-# Copy ONLY backend source code
-COPY backend/. .
+# Copy backend source code
+COPY . .
 
+# Expose backend port
 EXPOSE 3001
 
+# Start backend
 CMD ["node", "server.js"]

@@ -47,7 +47,7 @@ const handleSetWeather = async () => {
   //here, i need to only send the location, then on the backend just save the location
   //so i need to modify the user/weather model to hold just a string.
   try{
-    const response = await fetch('http://localhost:3001/api/findWeather/setWeather', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/findWeather/setWeather`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const grabSetWeatherOnOpen = async () => {
   //here I need to grab the location from the database on the backend, then make an axios request to the weather api with the location
   //and then populate currWeather, location, and condition with the response.
   try{
-  const response = await fetch(`http://localhost:3001/api/findWeather/mostRecentWeatherData/${username}`, 
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/findWeather/mostRecentWeatherData/${username}`, 
 
   {
     method: 'GET',
@@ -208,7 +208,7 @@ catch(error){
 const handleWeatherSearch = async () => {
   //make post request to backend, send User and query
   try {
-    const response = await fetch('http://localhost:3001/api/findWeather/getWeather',{
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/findWeather/getWeather`,{
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

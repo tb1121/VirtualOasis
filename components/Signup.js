@@ -33,7 +33,7 @@ export default function Signup() {
     try {
       setShaking(false)
       setSignedup(false)
-      const response = await fetch('http://localhost:3001/api/signup', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

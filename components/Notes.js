@@ -108,7 +108,7 @@ export default function Notes({ notesData, setNotesData }) {
 
   const saveNotes = async () => {
   // Save the current note
-  const response = await fetch('http://localhost:3001/api/notes/save-notes', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notes/save-notes`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function Notes({ notesData, setNotesData }) {
   setSavedNote(true);
 
   // Retrieve the updated notes data
-  const updatedNotesResponse = await fetch(`http://localhost:3001/api/notes/get-all-notes/${username}`);
+  const updatedNotesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/notes/get-all-notes/${username}`);
   const updatedNotesData = await updatedNotesResponse.json();
   const newData = updatedNotesData.allNotes;
 

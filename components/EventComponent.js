@@ -14,7 +14,7 @@ const EventComponent = ({setShowScheduleButton, events, handleBackButtonClick, g
     console.log('eventsToDelete is ' , eventsToDelete)
    
   try {
-    const response = await fetch('http://localhost:3001/api/scheduleEvent/deleteEvents/', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scheduleEvent/deleteEvents/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

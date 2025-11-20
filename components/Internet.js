@@ -20,7 +20,7 @@ export default function Internet() {
   const handleSearch = async () => {
     setClicked(true)
     try {
-      const response = await fetch('http://localhost:3001/api/internet/getResults', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/internet/getResults`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

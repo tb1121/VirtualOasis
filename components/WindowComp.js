@@ -196,7 +196,7 @@ export default function WindowComp() {
   
         // Send a POST request to add the shuffledFavorite to favorites
         const addSongResponse = await fetch(
-          'http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong',
+          `${process.env.NEXT_PUBLIC_API_URL}/api/saveFavoriteSong/sendFavoriteSong`,
           {
             method: 'POST',
             headers: {
@@ -230,7 +230,7 @@ export default function WindowComp() {
     try {
       // Send a DELETE request to remove the shuffledFavorite from favorites
       const deleteResponse = await fetch(
-        'http://localhost:3001/api/deleteSongs/deleteFavoriteSong',
+        `${process.env.NEXT_PUBLIC_API_URL}/api/deleteSongs/deleteFavoriteSong`,
         {
           method: 'DELETE',
           headers: {
@@ -273,7 +273,7 @@ export default function WindowComp() {
       if (!newHeartClicked) {
         // Logic to delete the favorite song from the database
         const response = await fetch(
-          'http://localhost:3001/api/deleteSongs/deleteFavoriteSong',
+          `${process.env.NEXT_PUBLIC_API_URL}/api/deleteSongs/deleteFavoriteSong`,
           {
             method: 'DELETE',
             headers: {
@@ -296,7 +296,7 @@ export default function WindowComp() {
       } else {
         // Logic to send the favorite song to the database
         const response = await fetch(
-          'http://localhost:3001/api/saveFavoriteSong/sendFavoriteSong',
+          `${process.env.NEXT_PUBLIC_API_URL}1/api/saveFavoriteSong/sendFavoriteSong`,
           {
             method: 'POST',
             headers: {
@@ -384,7 +384,7 @@ export default function WindowComp() {
   const handleUpdateGrabAllFavoriteSongs = async () => {
   
     try {
-      const response = await fetch(`http://localhost:3001/api/saveFavoriteSong/grabAllSongs/${username}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/saveFavoriteSong/grabAllSongs/${username}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -421,7 +421,7 @@ export default function WindowComp() {
     
     setFavoritesOpen(!favoritesOpen)//I want to skip this part of the code if songWasDeleted is true
     try {
-      const response = await fetch(`http://localhost:3001/api/saveFavoriteSong/grabAllSongs/${username}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/saveFavoriteSong/grabAllSongs/${username}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

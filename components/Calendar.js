@@ -279,7 +279,7 @@ export default function Calendar() {
     //get request to backend http://localhost:3001/api/scheduleEvent/grabAllEvents
     try{
     //send along username in params
-    const response = await fetch(`http://localhost:3001/api/scheduleEvent/grabAllEvents/${username}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scheduleEvent/grabAllEvents/${username}`, {
       
       method: 'GET',
         headers: {
@@ -341,7 +341,7 @@ export default function Calendar() {
       console.log('eventName is ', eventName);
   
       // Make the POST request to your backend API
-      const response = await fetch('http://localhost:3001/api/scheduleEvent/saveEvent', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scheduleEvent/saveEvent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
